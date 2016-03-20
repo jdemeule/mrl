@@ -207,6 +207,7 @@
 		FEDC4CD31C9F000900D56320 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -214,6 +215,7 @@
 		FEDC4CD41C9F000900D56320 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
