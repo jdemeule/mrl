@@ -311,6 +311,7 @@ private:
 template <typename T, typename Generator>
 struct nums_range : public basic_range {
    typedef nums_iterator<T, Generator> iterator;
+   typedef nums_iterator<T, Generator> const_iterator;
 
    explicit nums_range(T first, T last, Generator gen)
       : m_first(first)
@@ -500,6 +501,21 @@ transform_operator<F> select(F op) {
 }
 
 
+struct take_n_operator : public pipeable_operator {
+   explicit take_n_operator(std::size_t count)
+      : n(count) {}
+   template <typename Rg>
+   auto operator()(const Rg& r) const {
+      return make_take_n_range(r, n);
+   }
+   std::size_t n;
+};
+
+take_n_operator take(std::size_t n) {
+   return take_n_operator(n);
+}
+
+
 template <typename Rg,
           typename Op,
           typename std::enable_if<std::is_base_of<basic_range, Rg>::value>::type*       = nullptr,
@@ -568,6 +584,38 @@ void range_api_ints_take() {
    std::cout << std::endl;
 }
 
+void range_linq_api_ints_take() {
+   using namespace mrl_linq;
+   auto values = from(ints()) | take(15);
+   for (auto x : values)
+      std::cout << x << " ";
+   std::cout << std::endl;
+}
+
+void range_linq_pythagorean_triples() {
+   using namespace mrl_linq;
+   // clang-format off
+//   auto triples =
+//     from(ints(1))
+//   | select([](int z) {
+//      auto xs =
+//        from(ints(1, z))
+//      | select([=](int x) {
+//         auto ys =
+//           from(ints(1, x))
+//         | where([=](int y) { return x * x + y * y == z * z; })
+//         | select([=](int y) { return std::make_tuple(x, y, z); });
+//      });
+//   });
+   // auto triples =
+   //   from(ints(1))
+   // | from(ints(1
+   // clang-format on
+   //   for (auto x : triples)
+   //      std::cout << x << " ";
+   std::cout << std::endl;
+}
+
 int main(int argc, const char* argv[]) {
 
 
@@ -575,6 +623,7 @@ int main(int argc, const char* argv[]) {
    range_linq_api();
    range_api_ctn_liveness();
    range_api_ints_take();
+   range_linq_api_ints_take();
 
    //   mrl_linq::from(vs).where([](int x) -> bool { return x % 2 == 0; });
 
