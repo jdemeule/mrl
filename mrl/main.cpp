@@ -256,8 +256,29 @@ struct nums_iterator : public std::iterator<std::input_iterator_tag, T> {
 
    typedef T value_type;
 
-   nums_iterator(T first)
-      : m_first(first) {}
+   nums_iterator()
+      : m_first()
+      , m_gen() {}
+
+   nums_iterator(const nums_iterator& rhs)
+      : m_first(rhs.m_first)
+      , m_gen(rhs.m_gen) {}
+
+   nums_iterator& operator=(const nums_iterator& rhs) {
+      nums_iterator tmp(rhs);
+      swap(tmp);
+      return *this;
+   }
+
+   nums_iterator(T first, Generator gen)
+      : m_first(first)
+      , m_gen(gen) {}
+
+   void swap(nums_iterator& that) {
+      using std::swap;
+      swap(m_first, that.m_first);
+      swap(m_gen, that.m_gen);
+   }
 
    nums_iterator& operator++() {
       m_first = m_gen(m_first);
@@ -266,11 +287,11 @@ struct nums_iterator : public std::iterator<std::input_iterator_tag, T> {
 
    nums_iterator operator++(int) {
       m_first = m_gen(m_first);
-      return nums_iterator(m_first);
+      return nums_iterator(m_first, m_gen);
    }
 
    value_type operator*() const {
-      return m_apply(*m_first);
+      return m_first;
    }
 
    bool operator==(const nums_iterator& rhs) const {
@@ -286,7 +307,7 @@ private:
    Generator m_gen;
 };
 
-// + generator
+
 template <typename T, typename Generator>
 struct nums_range : public basic_range {
    typedef nums_iterator<T, Generator> iterator;
@@ -318,6 +339,93 @@ auto make_nums_range(T first, T last, Generator g) {
 auto ints(int initial_value = 0, int last_value = INT_MAX) {
    return make_nums_range(initial_value, last_value, [](int x) { return ++x; });
 }
+
+
+
+template <typename ForwardIt>
+struct take_n_iterator : public std::iterator<std::input_iterator_tag, typename ForwardIt::value_type> {
+
+   typedef typename ForwardIt::value_type value_type;
+
+   take_n_iterator(ForwardIt first, ForwardIt last, std::size_t count)
+      : m_first(first)
+      , m_last(last)
+      , m_count(count) {}
+
+   take_n_iterator& operator++() {
+      advance();
+      return *this;
+   }
+
+   //   take_n_iterator operator++(int) {
+   //      advance();
+   //      return take_n_iterator(m_first, m_last, m_count);
+   //   }
+
+   value_type operator*() const {
+      return *m_first;
+   }
+
+   bool operator==(const take_n_iterator& rhs) const {
+      return m_first == rhs.m_first;
+   }
+
+   bool operator!=(const take_n_iterator& rhs) const {
+      return !(*this == rhs);
+   }
+
+private:
+   void advance() {
+      if (m_count == 0)
+         m_first = m_last;
+
+      if (m_first != m_last) {
+         ++m_first;
+         --m_count;
+      }
+
+      if (m_count == 0)
+         m_first = m_last;
+   }
+
+   ForwardIt   m_first;
+   ForwardIt   m_last;
+   std::size_t m_count;
+};
+
+template <typename ForwardIt>
+struct take_n_range : public basic_range {
+
+   typedef take_n_iterator<ForwardIt> iterator;
+
+   take_n_range(ForwardIt first, ForwardIt last, std::size_t count)
+      : m_first(first)
+      , m_last(last)
+      , m_count(count) {}
+
+   iterator begin() const {
+      return iterator(m_first, m_last, m_count);
+   }
+
+   iterator end() const {
+      return iterator(m_last, m_last, m_count);
+   }
+
+private:
+   ForwardIt   m_first;
+   ForwardIt   m_last;
+   std::size_t m_count;
+};
+
+template <typename ForwardIt>
+take_n_range<ForwardIt> make_take_n_range(ForwardIt first, ForwardIt last, std::size_t count) {
+   return take_n_range<ForwardIt>(first, last, count);
+}
+
+template <typename Rg, typename std::enable_if<std::is_base_of<basic_range, Rg>::value>::type* = nullptr>
+take_n_range<typename Rg::iterator> make_take_n_range(const Rg& rg, std::size_t count) {
+   return take_n_range<typename Rg::iterator>(rg.begin(), rg.end(), count);
+};
 }
 
 namespace mrl_linq {
@@ -452,12 +560,21 @@ void range_api_ctn_liveness() {
    std::cout << std::endl;
 }
 
+void range_api_ints_take() {
+   using namespace mrl;
+   auto values = make_take_n_range(ints(), 15);
+   for (auto x : values)
+      std::cout << x << " ";
+   std::cout << std::endl;
+}
+
 int main(int argc, const char* argv[]) {
 
 
    range_api();
    range_linq_api();
    range_api_ctn_liveness();
+   range_api_ints_take();
 
    //   mrl_linq::from(vs).where([](int x) -> bool { return x % 2 == 0; });
 
