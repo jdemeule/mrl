@@ -14,6 +14,7 @@
 #include "repeat_operator.hpp"
 #include "take_n_operator.hpp"
 #include "transform_operator.hpp"
+#include "zip_operator.hpp"
 
 namespace mrl_linq {
 // using namespace ::mrl;
