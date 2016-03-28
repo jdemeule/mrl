@@ -135,6 +135,16 @@ void range_stream_api() {
    std::cout << std::endl;
 }
 
+void repeat_api() {
+   using namespace mrl;
+   auto r  = make_repeat_range(42);
+   auto vs = to_vector(make_take_n_range(r, 10));
+
+   for (auto x : vs)
+      std::cout << x << ", ";
+   std::cout << std::endl;
+}
+
 int main(int argc, const char* argv[]) {
 
 
@@ -144,6 +154,7 @@ int main(int argc, const char* argv[]) {
    range_api_ints_take();
    range_linq_api_ints_take();
    range_stream_api();
+   repeat_api();
    //   range_linq_pythagorean_triples();
 
    //   mrl_linq::from(vs).where([](int x) -> bool { return x % 2 == 0; });

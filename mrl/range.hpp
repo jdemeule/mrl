@@ -14,6 +14,7 @@
 #include "num_range.hpp"
 #include "owner_range.hpp"
 #include "ref_range.hpp"
+#include "repeat_range.hpp"
 #include "take_n_range.hpp"
 #include "transform_range.hpp"
 
