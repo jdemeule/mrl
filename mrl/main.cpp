@@ -124,7 +124,12 @@ void range_linq_pythagorean_triples() {
 void range_stream_api() {
    using namespace mrl_stream;
    std::vector<int> vs{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-   auto r = from(vs).where([](int x) { return x % 2 == 0; }).select([](int x) { return x * x; }).to_range();
+   // clang-format off
+   auto r = from(vs)
+      .where([](int x) { return x % 2 == 0; })
+      .select([](int x) { return x * x; })
+      .to_range();
+   // clang-format on
    for (auto x : r)
       std::cout << x << ", ";
    std::cout << std::endl;
