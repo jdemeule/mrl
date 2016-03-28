@@ -65,6 +65,7 @@ template <typename ForwardIt, typename Predicate>
 struct filter_range : public basic_range {
 
    typedef filter_iterator<ForwardIt, Predicate> iterator;
+   typedef typename ForwardIt::value_type value_type;
 
    filter_range(ForwardIt first, ForwardIt last, Predicate pred)
       : m_first(first)

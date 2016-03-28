@@ -16,6 +16,7 @@ template <typename Ctn>
 struct ref_range : public basic_range {
 public:
    typedef typename Ctn::const_iterator iterator;
+   typedef typename Ctn::value_type     value_type;
 
    explicit ref_range(const Ctn& ctn)
       : m_ctn(ctn) {}

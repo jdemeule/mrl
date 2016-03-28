@@ -18,7 +18,7 @@ void range_api() {
    using namespace mrl;
    std::vector<int> vs{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
-   auto odds = make_filter_range(make_ref_range(vs), [](int x) -> bool { return x % 2 == 0; });
+   auto odds = make_filter_range(make_ref_range(vs), [](int x) { return x % 2 == 0; });
 
    for (auto x : odds)
       std::cout << x << ", ";
@@ -28,6 +28,8 @@ void range_api() {
 
    std::copy(odd_squares.begin(), odd_squares.end(), std::ostream_iterator<int>(std::cout, " "));
    std::cout << std::endl;
+
+   std::vector<int> square_vs = to_vector(odd_squares);
 }
 
 void range_linq_api() {
@@ -35,7 +37,7 @@ void range_linq_api() {
 
    std::vector<int> vs{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
-   auto odds_lq = from(vs) | where([](int x) -> bool { return x % 2 == 0; });
+   auto odds_lq = from(vs) | where([](int x) { return x % 2 == 0; });
    for (auto x : odds_lq)
       std::cout << x << ", ";
    std::cout << std::endl;
@@ -43,6 +45,9 @@ void range_linq_api() {
    auto odd_squares = odds_lq | select([](int x) { return x * x; });
    std::copy(odd_squares.begin(), odd_squares.end(), std::ostream_iterator<int>(std::cout, " "));
    std::cout << std::endl;
+
+   auto square_vs = odd_squares | to_vector();
+   square_vs.empty();
 }
 
 std::vector<int> make_vs() {

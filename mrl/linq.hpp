@@ -43,6 +43,19 @@ namespace mrl_linq {
 
 //   void from(Rg) -> from_range_builder()
 //
+
+
+struct to_vector_operator : public pipeable_operator {
+   template <typename Rg>
+   auto operator()(const Rg& r) const {
+      return to_vector(r);
+   }
+};
+
+
+to_vector_operator to_vector() {
+   return to_vector_operator();
+}
 }
 
 

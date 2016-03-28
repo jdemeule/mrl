@@ -58,6 +58,7 @@ template <typename ForwardIt, typename F>
 struct transform_range : public basic_range {
 
    typedef transform_iterator<ForwardIt, F> iterator;
+   typedef typename std::result_of<F(typename ForwardIt::value_type)>::type value_type;
 
    transform_range(ForwardIt first, ForwardIt last, F apply)
       : m_first(first)

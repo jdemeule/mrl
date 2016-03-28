@@ -17,6 +17,7 @@ template <typename Ctn>
 struct owner_range : public basic_range {
 public:
    typedef typename Ctn::const_iterator iterator;
+   typedef typename Ctn::value_type     value_type;
 
    explicit owner_range(Ctn&& ctn)
       : m_ctn(std::move(ctn)) {}

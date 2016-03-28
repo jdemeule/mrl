@@ -67,7 +67,8 @@ private:
 template <typename ForwardIt>
 struct take_n_range : public basic_range {
 
-   typedef take_n_iterator<ForwardIt> iterator;
+   typedef take_n_iterator<ForwardIt>     iterator;
+   typedef typename ForwardIt::value_type value_type;
 
    take_n_range(ForwardIt first, ForwardIt last, std::size_t count)
       : m_first(first)

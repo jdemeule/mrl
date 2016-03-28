@@ -77,6 +77,7 @@ template <typename T, typename Generator>
 struct nums_range : public basic_range {
    typedef nums_iterator<T, Generator> iterator;
    typedef nums_iterator<T, Generator> const_iterator;
+   typedef T value_type;
 
    explicit nums_range(T first, T last, Generator gen)
       : m_first(first)
