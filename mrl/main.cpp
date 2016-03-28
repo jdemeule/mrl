@@ -145,6 +145,16 @@ void repeat_api() {
    std::cout << std::endl;
 }
 
+void repeat_linq_api() {
+   using namespace mrl_linq;
+   auto vs = repeat(42) | take(10) | to_vector();
+
+
+   for (auto x : vs)
+      std::cout << x << ", ";
+   std::cout << std::endl;
+}
+
 int main(int argc, const char* argv[]) {
 
 
@@ -155,6 +165,7 @@ int main(int argc, const char* argv[]) {
    range_linq_api_ints_take();
    range_stream_api();
    repeat_api();
+   repeat_linq_api();
    //   range_linq_pythagorean_triples();
 
    //   mrl_linq::from(vs).where([](int x) -> bool { return x % 2 == 0; });

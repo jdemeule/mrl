@@ -36,7 +36,7 @@ struct repeat_iterator : public std::iterator<std::input_iterator_tag, Value> {
    }
 
    friend bool operator==(const repeat_iterator& a, const repeat_iterator& b) {
-      return a.m_value == b.m_value && a.m_sentinel == b.m_sentinel;
+      return a.m_sentinel == b.m_sentinel;
    }
 
    friend bool operator!=(const repeat_iterator& a, const repeat_iterator& b) {

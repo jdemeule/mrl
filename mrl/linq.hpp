@@ -11,6 +11,7 @@
 
 #include "filter_operator.hpp"
 #include "pipeable_operator.hpp"
+#include "repeat_operator.hpp"
 #include "take_n_operator.hpp"
 #include "transform_operator.hpp"
 
