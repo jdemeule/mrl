@@ -1,0 +1,43 @@
+//
+//  owner_range.hpp
+//  mrl
+//
+//  Created by Jérémy Demeule on 28/03/16.
+//  Copyright © 2016 Jérémy Demeule. All rights reserved.
+//
+
+#ifndef owner_range_h
+#define owner_range_h
+
+#include "basic_range.hpp"
+
+namespace mrl {
+
+template <typename Ctn>
+struct owner_range : public basic_range {
+public:
+   typedef typename Ctn::const_iterator iterator;
+
+   explicit owner_range(Ctn&& ctn)
+      : m_ctn(std::move(ctn)) {}
+
+   iterator begin() const {
+      return m_ctn.begin();
+   }
+
+   iterator end() const {
+      return m_ctn.end();
+   }
+
+private:
+   Ctn m_ctn;
+};
+
+template <typename Rg>
+owner_range<Rg> make_range(Rg&& r) {
+   return owner_range<Rg>(std::move(r));
+}
+}
+
+
+#endif /* owner_range_h */
