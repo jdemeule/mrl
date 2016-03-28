@@ -33,12 +33,12 @@ auto to_list(const Rg& rg) {
    return std::list<typename Rg::value_type>(rg.begin(), rg.end());
 }
 
-template <typename Rg, typename KeySelector, typename ValueSelector>
-std::map<typename KeySelector::value_type, typename ValueSelector::value_type> to_dictionary(
-   const Rg& rg, KeySelector keyselector, ValueSelector valueselector) {
-   std::map<typename KeySelector::value_type, typename ValueSelector::value_type> dict;
-   return dict;
-}
+// template <typename Rg, typename KeySelector, typename ValueSelector>
+// std::map<typename KeySelector::value_type, typename ValueSelector::value_type> to_dictionary(
+//   const Rg& rg, KeySelector keyselector, ValueSelector valueselector) {
+//   std::map<typename KeySelector::value_type, typename ValueSelector::value_type> dict;
+//   return dict;
+//}
 }
 
 

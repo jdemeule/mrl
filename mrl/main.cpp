@@ -13,6 +13,7 @@
 
 #include "linq.hpp"
 #include "range.hpp"
+#include "stream.hpp"
 
 void range_api() {
    using namespace mrl;
@@ -120,6 +121,15 @@ void range_linq_pythagorean_triples() {
    std::cout << std::endl;
 }
 
+void range_stream_api() {
+   using namespace mrl_stream;
+   std::vector<int> vs{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+   auto r = from(vs).where([](int x) { return x % 2 == 0; }).select([](int x) { return x * x; }).to_range();
+   for (auto x : r)
+      std::cout << x << ", ";
+   std::cout << std::endl;
+}
+
 int main(int argc, const char* argv[]) {
 
 
@@ -128,6 +138,7 @@ int main(int argc, const char* argv[]) {
    range_api_ctn_liveness();
    range_api_ints_take();
    range_linq_api_ints_take();
+   range_stream_api();
    //   range_linq_pythagorean_triples();
 
    //   mrl_linq::from(vs).where([](int x) -> bool { return x % 2 == 0; });
