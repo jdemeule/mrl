@@ -155,6 +155,17 @@ void repeat_linq_api() {
    std::cout << std::endl;
 }
 
+void zip_api() {
+   using namespace mrl;
+   std::vector<int> v1 = {0, 1, 2, 3};
+   std::vector<int> v2 = {4, 5, 6, 7};
+
+   auto r = make_zip_range(make_ref_range(v1), make_ref_range(v2));
+   for (auto x : r)
+      std::cout << "{ " << std::get<0>(x) << ", " << std::get<1>(x) << " }, ";
+   std::cout << std::endl;
+}
+
 int main(int argc, const char* argv[]) {
 
 
@@ -166,6 +177,7 @@ int main(int argc, const char* argv[]) {
    range_stream_api();
    repeat_api();
    repeat_linq_api();
+   zip_api();
    //   range_linq_pythagorean_triples();
 
    //   mrl_linq::from(vs).where([](int x) -> bool { return x % 2 == 0; });

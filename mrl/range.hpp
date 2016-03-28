@@ -17,6 +17,7 @@
 #include "repeat_range.hpp"
 #include "take_n_range.hpp"
 #include "transform_range.hpp"
+#include "zip_range.hpp"
 
 #include <list>
 #include <map>
