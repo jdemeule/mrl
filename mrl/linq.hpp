@@ -9,10 +9,13 @@
 #ifndef linq_h
 #define linq_h
 
-#include "range.hpp"
+#include "filter_operator.hpp"
+#include "pipeable_operator.hpp"
+#include "take_n_operator.hpp"
+#include "transform_operator.hpp"
 
 namespace mrl_linq {
-using namespace ::mrl;
+// using namespace ::mrl;
 
 // template <typename Rg, typename Predicate>
 // struct where_builder {
@@ -40,77 +43,6 @@ using namespace ::mrl;
 
 //   void from(Rg) -> from_range_builder()
 //
-
-struct pipeable_operator {};
-
-template <typename Predicate>
-struct filter_predicate : public pipeable_operator {
-   explicit filter_predicate(Predicate pred)
-      : p(pred){};
-
-
-   template <typename Rg>
-   auto operator()(const Rg& r) const {
-      return make_filter_range(r, p);
-   }
-
-   Predicate p;
-};
-
-template <typename Predicate>
-filter_predicate<Predicate> where(Predicate p) {
-   return filter_predicate<Predicate>(p);
-}
-
-template <typename F>
-struct transform_operator : public pipeable_operator {
-   explicit transform_operator(F op)
-      : m_op(op){};
-   F operator()() const {
-      return m_op;
-   }
-   template <typename Rg>
-   auto operator()(const Rg& r) const {
-      return make_transform_range(r, m_op);
-   }
-
-   F m_op;
-};
-
-template <typename F>
-transform_operator<F> select(F op) {
-   return transform_operator<F>(op);
-}
-
-
-struct take_n_operator : public pipeable_operator {
-   explicit take_n_operator(std::size_t count)
-      : n(count) {}
-   template <typename Rg>
-   auto operator()(const Rg& r) const {
-      return make_take_n_range(r, n);
-   }
-   std::size_t n;
-};
-
-take_n_operator take(std::size_t n) {
-   return take_n_operator(n);
-}
-
-
-template <typename Rg,
-          typename Op,
-          typename std::enable_if<std::is_base_of<basic_range, Rg>::value>::type*       = nullptr,
-          typename std::enable_if<std::is_base_of<pipeable_operator, Op>::value>::type* = nullptr>
-auto operator|(const Rg& r, Op op) {
-   return op(r);
-}
-
-
-template <typename Rg>
-auto from(const Rg& rg) {
-   return make_ref_range(rg);
-}
 }
 
 
