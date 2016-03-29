@@ -18,10 +18,11 @@ struct take_n_iterator : public std::iterator<std::input_iterator_tag, typename 
 
    typedef typename ForwardIt::value_type value_type;
 
-   take_n_iterator(ForwardIt first, ForwardIt last, std::size_t count)
+   take_n_iterator(ForwardIt first, ForwardIt last, std::size_t count, bool sentinel = false)
       : m_first(first)
       , m_last(last)
-      , m_count(count) {}
+      , m_count(count)
+      , m_sentinel(sentinel) {}
 
    take_n_iterator& operator++() {
       advance();
@@ -38,7 +39,9 @@ struct take_n_iterator : public std::iterator<std::input_iterator_tag, typename 
    }
 
    friend bool operator==(const take_n_iterator& a, const take_n_iterator& b) {
-      return a.m_first == b.m_first;
+      if (a.m_sentinel || b.m_sentinel)
+         return a.m_count == b.m_count;
+      return a.m_first == b.m_first && a.m_count == b.m_count;
    }
 
    friend bool operator!=(const take_n_iterator& a, const take_n_iterator& b) {
@@ -47,21 +50,25 @@ struct take_n_iterator : public std::iterator<std::input_iterator_tag, typename 
 
 private:
    void advance() {
-      if (m_count == 0)
-         m_first = m_last;
+      //      if (m_count == 0)
+      //         m_first = m_last;
 
       if (m_first != m_last) {
          ++m_first;
          --m_count;
       }
 
-      if (m_count == 0)
-         m_first = m_last;
+      if (m_first == m_last)
+         m_count = 0;
+
+      //      if (m_count == 0)
+      //         m_first = m_last;
    }
 
    ForwardIt   m_first;
    ForwardIt   m_last;
    std::size_t m_count;
+   bool        m_sentinel;
 };
 
 template <typename ForwardIt>
@@ -80,7 +87,7 @@ struct take_n_range : public basic_range {
    }
 
    iterator end() const {
-      return iterator(m_last, m_last, m_count);
+      return iterator(m_last, m_last, 0, true);
    }
 
 private:
