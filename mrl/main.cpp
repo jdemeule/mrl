@@ -222,6 +222,33 @@ void concat_linq_api() {
    print_all(r);
 }
 
+void join_api() {
+   using namespace mrl;
+   std::cout << "join_api" << std::endl;
+
+   std::vector<int> v1 = {0, 1, 2, 3};
+   std::list<int>   v2 = {4, 5, 6, 7};
+
+   auto r = make_join_range(make_ref_range(v1), make_ref_range(v2));
+   for (auto x : r)
+      std::cout << "{ " << std::get<0>(x) << ", " << std::get<1>(x) << " }, ";
+   std::cout << std::endl;
+}
+
+void join_linq_api() {
+   using namespace mrl_linq;
+
+   std::cout << "join_linq_api" << std::endl;
+
+   std::vector<int> v1 = {0, 1, 2, 3};
+   std::list<int>   v2 = {4, 5, 6, 7};
+
+   auto r = from(v1) | join(from(v2));
+   for (auto x : r)
+      std::cout << "{ " << std::get<0>(x) << ", " << std::get<1>(x) << " }, ";
+   std::cout << std::endl;
+}
+
 int main(int argc, const char* argv[]) {
 
 
@@ -237,6 +264,8 @@ int main(int argc, const char* argv[]) {
    zip_linq_api();
    concat_api();
    concat_linq_api();
+   join_api();
+   join_linq_api();
    //   range_linq_pythagorean_triples();
 
    //   mrl_linq::from(vs).where([](int x) -> bool { return x % 2 == 0; });

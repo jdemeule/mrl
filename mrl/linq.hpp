@@ -11,6 +11,7 @@
 
 #include "concat_operator.hpp"
 #include "filter_operator.hpp"
+#include "join_operator.hpp"
 #include "pipeable_operator.hpp"
 #include "repeat_operator.hpp"
 #include "take_n_operator.hpp"
