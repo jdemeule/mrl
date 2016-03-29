@@ -8,12 +8,20 @@
 
 #include <iostream>
 #include <iterator>
+#include <list>
 #include <type_traits>
 #include <vector>
 
 #include "linq.hpp"
 #include "range.hpp"
 #include "stream.hpp"
+
+template <typename R>
+void print_all(const R& r) {
+   for (auto x : r)
+      std::cout << x << ", ";
+   std::cout << std::endl;
+}
 
 void range_api() {
    using namespace mrl;
@@ -178,6 +186,26 @@ void zip_linq_api() {
    std::cout << std::endl;
 }
 
+void concat_api() {
+   using namespace mrl;
+
+   std::vector<int> v1 = {0, 1, 2, 3};
+   std::list<int>   v2 = {4, 5, 6, 7};
+
+   auto r = make_concat_range(make_ref_range(v1), make_ref_range(v2));
+   print_all(r);
+}
+
+void concat_linq_api() {
+   using namespace mrl_linq;
+
+   std::vector<int> v1 = {0, 1, 2, 3};
+   std::list<int>   v2 = {4, 5, 6, 7};
+
+   auto r = from(v1) | concat(from(v2));
+   print_all(r);
+}
+
 int main(int argc, const char* argv[]) {
 
 
@@ -191,6 +219,8 @@ int main(int argc, const char* argv[]) {
    repeat_linq_api();
    zip_api();
    zip_linq_api();
+   concat_api();
+   concat_linq_api();
    //   range_linq_pythagorean_triples();
 
    //   mrl_linq::from(vs).where([](int x) -> bool { return x % 2 == 0; });

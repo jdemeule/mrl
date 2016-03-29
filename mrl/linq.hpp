@@ -9,6 +9,7 @@
 #ifndef linq_h
 #define linq_h
 
+#include "concat_operator.hpp"
 #include "filter_operator.hpp"
 #include "pipeable_operator.hpp"
 #include "repeat_operator.hpp"
