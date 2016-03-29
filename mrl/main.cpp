@@ -115,17 +115,85 @@ void range_linq_pythagorean_triples() {
    //   for (auto x : triples)
    //      std::cout << x << " ";
 
-   //   for (auto z : ints(1)) {
-   //      for (auto x : ints(1, z)) {
-   //         for (auto y : from(ints(1, x)) | where([=](auto y) { return x * x + y * y == z * z; })) {
-   //            // x, y, z;
+   //   auto triples = view::for_each(view::ints(1), [](int z) {
+   //      return view::for_each(view::ints(1, z + 1), [=](int x) {
+   //         return view::for_each(view::ints(x, z + 1),
+   //                               [=](int y) { return yield_if(x * x + y * y == z * z, std::make_tuple(x, y, z)); });
+   //      });
+   //   });
+
+   //   auto zzzz = make_concat_range(ints(1, 4),)
+
+   //   auto triple2 = mrl::make_transform_range(ints(1), [](int z) {
+   //      return mrl::make_transform_range(ints(1, z + 1), [=](int x) {
+   //         return mrl::make_transform_range(ints(x, z + 1), [=](int y) {
+   //            if (x * x + y * y == z * z)
+   //               std::cout << "Found" << std::endl;
+   //         });
+   //      });
+   //   });
+   //
+   //   auto triple = triple2.begin();
+   //   for (int n = 0; n < 10; ++n, ++triple)
+   //      *triple;
+
+   //   auto triple3 = from(ints(1)) | select([](int z) {
+   //                     return from(ints(1, z + 1)) | select([=](int x) {
+   //                               return from(ints(x, z + 1)) | where([=](int y) { return x * x + y * y == z * z; }) |
+   //                                      select([=](int y) { return std::make_tuple(x, y, z); });
+   //                            });
+   //                  });
+
+   //   for (int z : ints(1, 5)) {
+   //      for (int y : ints(1, z + 1)) {
+   //         for (int x : ints(1, y + 1)) {
+   //            std::cout << x << y << z << std::endl;
    //         }
    //      }
    //   }
+   std::vector<std::tuple<int, int, int> > tx;
+
+   int found = 0;
+   for (int z = 1;; ++z) {
+      for (int x = 1; x <= z; ++x) {
+         for (int y = x; y <= z; ++y) {
+            if (x * x + y * y == z * z) {
+               tx.push_back(std::make_tuple(x, y, z));
+               ++found;
+               if (found == 10)
+                  goto fdone;
+            }
+         }
+      }
+   }
+fdone:
+
+
+   tx.clear();
+   for (int z : ints(1, 6)) {
+      for (int x : ints(1, z + 1)) {
+         for (int y : from(ints(x, z + 1)) | where([=](auto y) {
+                         bool accept = x * x + y * y == z * z;
+                         std::cout << x << y << z << " " << accept << std::endl;
+
+                         return accept;
+                      })) {
+            // x, y, z;
+            tx.emplace_back(std::make_tuple(x, y, z));
+            if (tx.size() == 10)
+               goto done;
+         }
+      }
+   }
+done:
 
    std::cout << "range_linq_pythagorean_triples" << std::endl;
+   for (auto triple : tx) {
+      std::cout << "{ " << std::get<0>(triple) << ", " << std::get<1>(triple) << ", " << std::get<2>(triple) << " }"
+                << std::endl;
+   }
 
-   auto xys = from(ints(1)) | select([](auto y) { return ints(1, y); });
+   auto xys = from(ints(1)) | select([](auto y) { return ints(1, y); }) | take(10);
    for (auto xy : xys) {
       for (auto x : xy)
          std::cout << x << " ";
@@ -143,10 +211,26 @@ void range_stream_api() {
    // clang-format off
    auto r = from(vs)
       .where([](int x) { return x % 2 == 0; })
-      .select([](int x) { return x * x; })
+      .select([](int x) { return x * x; } )
       .to_range();
    // clang-format on
    print_all(r);
+}
+
+void filter_api() {
+   using namespace mrl;
+
+   std::cout << "filter_api" << std::endl;
+
+   std::vector<int> vs{1, 2, 3};
+   {
+      auto r = make_filter_range(make_ref_range(vs), [](int x) { return x > 2; });
+      print_all(r);
+   }
+   {
+      auto r = make_filter_range(make_ref_range(vs), [](int x) { return x < 2; });
+      print_all(r);
+   }
 }
 
 void repeat_api() {
@@ -249,15 +333,151 @@ void join_linq_api() {
    std::cout << std::endl;
 }
 
+template <typename It>
+struct f_iterator {};
+
+
+template <typename It>
+void flatten(It first, It last) {
+   for (; first != last; ++first)
+      print_all(*first);
+}
+
+
+template <typename R>
+void flatten(const R& r) {
+   for (auto subRange : r) {
+      print_all(subRange);
+   }
+}
+
+void flatten_api() {
+   using namespace mrl;
+
+   std::cout << "flatten_api" << std::endl;
+
+   std::vector<std::vector<int> > vvs = {{1}, {1, 2}, {1, 2, 3}};
+
+   auto x = make_flatten_range(make_ref_range(vvs));
+   print_all(x);
+}
+
+void flatten_api_2() {
+   using namespace mrl;
+
+   std::cout << "flatten_api_2" << std::endl;
+
+   auto ps = mrl::make_transform_range(ints(1), [](int z) { return ints(1, z + 1); });
+
+   auto x = make_take_n_range(make_flatten_range(ps), 6);
+   print_all(x);
+}
+
+void pythagoreans_2() {
+   using namespace mrl;
+
+   std::cout << "pythagoreans_2" << std::endl;
+
+   // clang-format off
+   auto zs = make_transform_range(ints(1, 6), [](int z) {
+      auto zxs = make_transform_range(ints(1, z + 1), [=](int x) {
+         auto zyxs = make_transform_range(ints(x, z + 1), [=](int y) {
+            return std::make_tuple(x, y, z);
+         });
+         return zyxs;
+//         return make_filter_range(zyxs, [](auto xyz) {
+//            auto x = std::get<0>(xyz);
+//            auto y = std::get<1>(xyz);
+//            auto z = std::get<2>(xyz);
+//            return x * x + y * y == z * z;
+//         });
+      });
+      return make_flatten_range(zxs);
+   });
+   // clang-format on
+
+   auto bflat = to_vector(make_transform_range(zs, [](auto r) { return to_vector(r); }));
+
+   auto flat    = make_flatten_range(zs);
+   auto s       = std::distance(flat.begin(), flat.end());
+   auto flat_vs = to_vector(flat);
+
+   auto firsts = make_filter_range(flat, [](auto xyz) {
+      auto x = std::get<0>(xyz);
+      auto y = std::get<1>(xyz);
+      auto z = std::get<2>(xyz);
+      return x * x + y * y == z * z;
+   });
+   //   auto firsts = make_flatten_range(zs) | mrl_linq::where([](auto xyz) { return false; });
+   for (auto triple : firsts) {
+      std::cout << "{ " << std::get<0>(triple) << ", " << std::get<1>(triple) << ", " << std::get<2>(triple) << " }"
+                << std::endl;
+   }
+   //   for (auto x : firsts)
+   //      std::cout << "{ " << std::get<0>(x) << ", " << std::get<1>(x) << " }, ";
+   std::cout << std::endl;
+}
+
+template <typename InputIterator>
+struct cursor {
+   typedef typename InputIterator::value_type value_type;
+
+   cursor(InputIterator first, InputIterator last)
+      : m_first(first)
+      , m_last(last) {}
+
+   bool done() const {
+      return m_first == m_last;
+   }
+
+   void next() {
+      ++m_first;
+   }
+
+   value_type value() {
+      return *m_first;
+   }
+
+   InputIterator m_first;
+   InputIterator m_last;
+};
+
+
+template <typename InputIterator>
+struct count_cursor {
+   typedef typename InputIterator::value_type value_type;
+
+   count_cursor(InputIterator first, std::size_t count)
+      : m_first(first)
+      , m_count(count) {}
+
+   bool done() const {
+      return m_count > 0;
+   }
+
+   void next() {
+      ++m_first;
+      --m_count;
+   }
+
+   value_type value() {
+      return *m_first;
+   }
+
+   InputIterator m_first;
+   std::size_t   m_count;
+};
+
 int main(int argc, const char* argv[]) {
 
 
    range_api();
    range_linq_api();
-   range_api_ctn_liveness();
-   range_api_ints_take();
-   range_linq_api_ints_take();
-   range_stream_api();
+   //   range_api_ctn_liveness();
+   //   range_api_ints_take();
+   //   range_linq_api_ints_take();
+   //   range_stream_api();
+   filter_api();
    repeat_api();
    repeat_linq_api();
    zip_api();
@@ -266,7 +486,12 @@ int main(int argc, const char* argv[]) {
    concat_linq_api();
    join_api();
    join_linq_api();
-   //   range_linq_pythagorean_triples();
+   range_linq_pythagorean_triples();
+
+   flatten_api();
+   flatten_api_2();
+
+   pythagoreans_2();
 
    //   mrl_linq::from(vs).where([](int x) -> bool { return x % 2 == 0; });
 

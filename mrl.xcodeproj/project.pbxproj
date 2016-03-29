@@ -46,6 +46,8 @@
 		FE82E5BB1CAAB0460057DBB5 /* concat_operator.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = concat_operator.hpp; sourceTree = "<group>"; };
 		FE82E5BC1CAAB43E0057DBB5 /* join_range.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = join_range.hpp; sourceTree = "<group>"; };
 		FE82E5BD1CAAB8860057DBB5 /* join_operator.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = join_operator.hpp; sourceTree = "<group>"; };
+		FE82E5BE1CAAC3E20057DBB5 /* for_each_range.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = for_each_range.hpp; sourceTree = "<group>"; };
+		FE82E5BF1CAACEB20057DBB5 /* flatten_range.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = flatten_range.hpp; sourceTree = "<group>"; };
 		FEDC4CCB1C9F000900D56320 /* mrl */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mrl; sourceTree = BUILT_PRODUCTS_DIR; };
 		FEDC4CCE1C9F000900D56320 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -84,6 +86,8 @@
 				FE82E5BB1CAAB0460057DBB5 /* concat_operator.hpp */,
 				FE82E5BC1CAAB43E0057DBB5 /* join_range.hpp */,
 				FE82E5BD1CAAB8860057DBB5 /* join_operator.hpp */,
+				FE82E5BE1CAAC3E20057DBB5 /* for_each_range.hpp */,
+				FE82E5BF1CAACEB20057DBB5 /* flatten_range.hpp */,
 			);
 			name = details;
 			sourceTree = "<group>";

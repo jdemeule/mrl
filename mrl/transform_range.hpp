@@ -21,6 +21,11 @@ struct transform_iterator
 
    typedef typename std::result_of<F(typename ForwardIt::value_type)>::type value_type;
 
+   transform_iterator()
+      : m_first()
+      , m_last()
+      , m_apply() {}
+
    transform_iterator(ForwardIt first, ForwardIt last, F apply)
       : m_first(first)
       , m_last(last)
@@ -57,6 +62,7 @@ private:
 template <typename ForwardIt, typename F>
 struct transform_range : public basic_range {
 
+   typedef transform_iterator<ForwardIt, F> const_iterator;
    typedef transform_iterator<ForwardIt, F> iterator;
    typedef typename std::result_of<F(typename ForwardIt::value_type)>::type value_type;
 

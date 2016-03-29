@@ -22,7 +22,9 @@ struct filter_iterator : public std::iterator<std::input_iterator_tag, typename 
    filter_iterator(ForwardIt first, ForwardIt last, Predicate pred)
       : m_first(first)
       , m_last(last)
-      , m_pred(pred) {}
+      , m_pred(pred) {
+      //      advance();
+   }
 
    filter_iterator& operator++() {
       advance();
@@ -35,6 +37,7 @@ struct filter_iterator : public std::iterator<std::input_iterator_tag, typename 
    }
 
    value_type operator*() const {
+      //      advance();
       return *m_first;
    }
 
@@ -48,15 +51,21 @@ struct filter_iterator : public std::iterator<std::input_iterator_tag, typename 
    }
 
 private:
-   void advance() {
+   void advance() const {
+      //      do {
+      //         ++m_first;
+      //      } while (m_first != m_last && !m_pred(*m_first));
+      if (m_first == m_last)
+         return;
+
       do {
          ++m_first;
       } while (m_first != m_last && !m_pred(*m_first));
    }
 
-   ForwardIt m_first;
-   ForwardIt m_last;
-   Predicate m_pred;
+   mutable ForwardIt m_first;
+   mutable ForwardIt m_last;
+   Predicate         m_pred;
 };
 
 
@@ -65,6 +74,7 @@ template <typename ForwardIt, typename Predicate>
 struct filter_range : public basic_range {
 
    typedef filter_iterator<ForwardIt, Predicate> iterator;
+   typedef filter_iterator<ForwardIt, Predicate> const_iterator;
    typedef typename ForwardIt::value_type value_type;
 
    filter_range(ForwardIt first, ForwardIt last, Predicate pred)
@@ -73,7 +83,16 @@ struct filter_range : public basic_range {
       , m_pred(pred) {}
 
    iterator begin() const {
-      return iterator(m_first, m_last, m_pred);
+      ForwardIt first = m_first;
+      //      for (; first != m_last && !m_pred(*first); ++first)
+      //         ;
+      if (first == m_last)
+         return iterator(m_last, m_last, m_pred);
+
+      do {
+         ++first;
+      } while (first != m_last && !m_pred(*first));
+      return iterator(first, m_last, m_pred);
    }
 
    iterator end() const {

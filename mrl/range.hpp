@@ -11,6 +11,7 @@
 #include "basic_range.hpp"
 #include "concat_range.hpp"
 #include "filter_range.hpp"
+#include "flatten_range.hpp"
 #include "iterator_range.hpp"
 #include "join_range.hpp"
 #include "num_range.hpp"
