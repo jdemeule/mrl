@@ -25,13 +25,13 @@ void print_all(const R& r) {
 
 void range_api() {
    using namespace mrl;
+
+   std::cout << "range_api" << std::endl;
+
    std::vector<int> vs{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
    auto odds = make_filter_range(make_ref_range(vs), [](int x) { return x % 2 == 0; });
-
-   for (auto x : odds)
-      std::cout << x << ", ";
-   std::cout << std::endl;
+   print_all(odds);
 
    auto odd_squares = make_transform_range(odds, [](int x) { return x * x; });
 
@@ -44,12 +44,12 @@ void range_api() {
 void range_linq_api() {
    using namespace mrl_linq;
 
+   std::cout << "range_linq_api" << std::endl;
+
    std::vector<int> vs{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
    auto odds_lq = from(vs) | where([](int x) { return x % 2 == 0; });
-   for (auto x : odds_lq)
-      std::cout << x << ", ";
-   std::cout << std::endl;
+   print_all(odds_lq);
 
    auto odd_squares = odds_lq | select([](int x) { return x * x; });
    std::copy(odd_squares.begin(), odd_squares.end(), std::ostream_iterator<int>(std::cout, " "));
@@ -65,29 +65,32 @@ std::vector<int> make_vs() {
 
 void range_api_ctn_liveness() {
    using namespace mrl;
+
+   std::cout << "range_api_ctn_liveness" << std::endl;
+
    auto r = make_range(make_vs());
 
-   for (auto x : r)
-      std::cout << x << ", ";
-   std::cout << std::endl;
+   print_all(r);
 }
 
 void range_api_ints_take() {
    using namespace mrl;
+
+   std::cout << "range_api_ints_take" << std::endl;
+
    auto values = make_take_n_range(ints(), 15);
 
-   for (auto x : values)
-      std::cout << x << " ";
-   std::cout << std::endl;
+   print_all(values);
 }
 
 void range_linq_api_ints_take() {
    using namespace mrl_linq;
+
+   std::cout << "range_linq_api_ints_take" << std::endl;
+
    auto values = from(ints()) | take(15);
 
-   for (auto x : values)
-      std::cout << x << " ";
-   std::cout << std::endl;
+   print_all(values);
 }
 
 void range_linq_pythagorean_triples() {
@@ -120,6 +123,8 @@ void range_linq_pythagorean_triples() {
    //      }
    //   }
 
+   std::cout << "range_linq_pythagorean_triples" << std::endl;
+
    auto xys = from(ints(1)) | select([](auto y) { return ints(1, y); });
    for (auto xy : xys) {
       for (auto x : xy)
@@ -131,6 +136,9 @@ void range_linq_pythagorean_triples() {
 
 void range_stream_api() {
    using namespace mrl_stream;
+
+   std::cout << "range_stream_api" << std::endl;
+
    std::vector<int> vs{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
    // clang-format off
    auto r = from(vs)
@@ -138,33 +146,35 @@ void range_stream_api() {
       .select([](int x) { return x * x; })
       .to_range();
    // clang-format on
-   for (auto x : r)
-      std::cout << x << ", ";
-   std::cout << std::endl;
+   print_all(r);
 }
 
 void repeat_api() {
    using namespace mrl;
+
+   std::cout << "repeat_api" << std::endl;
+
    auto r  = make_repeat_range(42);
    auto vs = to_vector(make_take_n_range(r, 10));
 
-   for (auto x : vs)
-      std::cout << x << ", ";
-   std::cout << std::endl;
+   print_all(vs);
 }
 
 void repeat_linq_api() {
    using namespace mrl_linq;
+
+   std::cout << "repeat_linq_api" << std::endl;
+
    auto vs = repeat(42) | take(10) | to_vector();
 
-
-   for (auto x : vs)
-      std::cout << x << ", ";
-   std::cout << std::endl;
+   print_all(vs);
 }
 
 void zip_api() {
    using namespace mrl;
+
+   std::cout << "zip_api" << std::endl;
+
    std::vector<int> v1 = {0, 1, 2, 3};
    std::vector<int> v2 = {4, 5, 6, 7};
 
@@ -176,6 +186,8 @@ void zip_api() {
 
 void zip_linq_api() {
    using namespace mrl_linq;
+
+   std::cout << "zip_linq_api" << std::endl;
 
    std::vector<int> v1 = {0, 1, 2, 3};
    std::vector<int> v2 = {4, 5, 6, 7};
@@ -189,6 +201,8 @@ void zip_linq_api() {
 void concat_api() {
    using namespace mrl;
 
+   std::cout << "concat_api" << std::endl;
+
    std::vector<int> v1 = {0, 1, 2, 3};
    std::list<int>   v2 = {4, 5, 6, 7};
 
@@ -198,6 +212,8 @@ void concat_api() {
 
 void concat_linq_api() {
    using namespace mrl_linq;
+
+   std::cout << "concat_linq_api" << std::endl;
 
    std::vector<int> v1 = {0, 1, 2, 3};
    std::list<int>   v2 = {4, 5, 6, 7};
