@@ -373,6 +373,42 @@ void flatten_api_2() {
    print_all(x);
 }
 
+void flatten_api_3() {
+   using namespace mrl;
+
+   std::cout << "flatten_api_3" << std::endl;
+
+   std::vector<std::vector<int> > vvs = {{1}, {1, 2}, {1, 2, 3}};
+
+   {
+      auto x = make_filter_range(make_flatten_range(make_ref_range(vvs)), [](int x) { return x > 2; });
+      print_all(x);
+   }
+   {
+      auto x = make_filter_range(make_flatten_range(make_ref_range(vvs)), [](int x) { return x < 2; });
+      for (auto i = x.begin(); i != x.end(); ++i)
+         std::cout << *i;
+   }
+}
+
+void flatten_api_4() {
+   using namespace mrl;
+
+   std::cout << "flatten_api_4" << std::endl;
+
+   std::vector<std::vector<int> > vvs = {{}, {1, 2}, {}, {1, 2, 3}};
+
+   {
+      auto x = make_filter_range(make_flatten_range(make_ref_range(vvs)), [](int x) { return x > 2; });
+      print_all(x);
+   }
+   {
+      auto x = make_filter_range(make_flatten_range(make_ref_range(vvs)), [](int x) { return x < 2; });
+      print_all(x);
+   }
+}
+
+
 void pythagoreans_2() {
    using namespace mrl;
 
@@ -416,6 +452,37 @@ void pythagoreans_2() {
    //   for (auto x : firsts)
    //      std::cout << "{ " << std::get<0>(x) << ", " << std::get<1>(x) << " }, ";
    std::cout << std::endl;
+}
+
+void pythagoreans_3() {
+   using namespace mrl;
+
+   std::cout << "pythagoreans_3" << std::endl;
+
+   // clang-format off
+   auto triples = make_transform_range(ints(1, 6), [](int z) {
+      auto zxs = make_transform_range(ints(1, z + 1), [=](int x) {
+         auto zyxs = make_transform_range(ints(x, z + 1), [=](int y) {
+            return std::make_tuple(x, y, z);
+         });
+         return make_filter_range(zyxs, [](auto xyz) {
+            auto x = std::get<0>(xyz);
+            auto y = std::get<1>(xyz);
+            auto z = std::get<2>(xyz);
+            return x * x + y * y == z * z;
+         });
+      });
+      return make_flatten_range(zxs);
+   });
+   // clang-format on
+
+   auto bflat = to_vector(make_transform_range(triples, [](auto r) { return to_vector(r); }));
+
+
+   for (auto triple : make_flatten_range(triples)) {
+      std::cout << "{ " << std::get<0>(triple) << ", " << std::get<1>(triple) << ", " << std::get<2>(triple) << " }"
+                << std::endl;
+   }
 }
 
 template <typename InputIterator>
@@ -488,10 +555,14 @@ int main(int argc, const char* argv[]) {
    join_linq_api();
    range_linq_pythagorean_triples();
 
+
    flatten_api();
    flatten_api_2();
+   flatten_api_3();
+   flatten_api_4();
 
    pythagoreans_2();
+   pythagoreans_3();
 
    //   mrl_linq::from(vs).where([](int x) -> bool { return x % 2 == 0; });
 

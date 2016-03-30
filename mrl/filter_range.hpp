@@ -89,9 +89,8 @@ struct filter_range : public basic_range {
       if (first == m_last)
          return iterator(m_last, m_last, m_pred);
 
-      do {
+      while (first != m_last && !m_pred(*first))
          ++first;
-      } while (first != m_last && !m_pred(*first));
       return iterator(first, m_last, m_pred);
    }
 

@@ -17,9 +17,6 @@
 
 namespace mrl {
 
-// template <typename ForwardIt>
-// struct flatten_cursor {
-//};
 
 template <typename ForwardIt1>
 struct flatten_iterator : public std::iterator<std::input_iterator_tag, typename ForwardIt1::value_type::value_type> {
@@ -28,27 +25,24 @@ struct flatten_iterator : public std::iterator<std::input_iterator_tag, typename
    typedef typename ForwardIt2::value_type                 value_type;
 
 
-   flatten_iterator(ForwardIt1 first1, ForwardIt1 last1, bool sentinel = false)
-      : m_first1(first1)
-      , m_last1(last1)
-      , m_first2()
-      , m_last2()
+   flatten_iterator(ForwardIt1 first, ForwardIt1 last, bool sentinel = false)
+      : m_outer_it(first)
+      , m_outer_last(last)
+      , m_inner_it()
       , m_sentinel(sentinel) {
-      if (m_first1 != m_last1) {
-         m_first2 = std::make_unique<ForwardIt2>((*m_first1).begin());
-         m_last2  = std::make_unique<ForwardIt2>((*m_first1).end());
+      if (m_outer_it != m_outer_last) {
+         m_inner_it = std::make_unique<ForwardIt2>((*m_outer_it).begin());
+         skip_to_next_inner_range();
       }
    }
 
    flatten_iterator(const flatten_iterator& rhs)
-      : m_first1(rhs.m_first1)
-      , m_last1(rhs.m_last1)
-      , m_first2()
-      , m_last2()
+      : m_outer_it(rhs.m_outer_it)
+      , m_outer_last(rhs.m_outer_last)
+      , m_inner_it()
       , m_sentinel(rhs.m_sentinel) {
-      if (m_first1 != m_last1) {
-         m_first2 = std::make_unique<ForwardIt2>(*rhs.m_first2);
-         m_last2  = std::make_unique<ForwardIt2>(*rhs.m_last2);
+      if (m_outer_it != m_outer_last) {
+         m_inner_it = std::make_unique<ForwardIt2>(*rhs.m_inner_it);
       }
    }
 
@@ -59,35 +53,28 @@ struct flatten_iterator : public std::iterator<std::input_iterator_tag, typename
    }
 
    void swap(flatten_iterator& that) {
-      std::swap(m_first1, that.m_first1);
-      std::swap(m_last1, that.m_last1);
-      auto ptr = m_first2.release();
-      m_first2.reset(that.m_first2.release());
-      that.m_first2.reset(ptr);
-      ptr = m_last2.release();
-      m_last2.reset(that.m_last2.release());
-      that.m_last2.reset(ptr);
+      std::swap(m_outer_it, that.m_outer_it);
+      std::swap(m_outer_last, that.m_outer_last);
+      auto ptr = m_inner_it.release();
+      m_inner_it.reset(that.m_inner_it.release());
+      that.m_inner_it.reset(ptr);
       std::swap(m_sentinel, that.m_sentinel);
    }
 
    flatten_iterator& operator++() {
-      advance();
+      ++*m_inner_it;
+      skip_to_next_inner_range();
       return *this;
    }
 
-   //   join_iterator operator++(int) {
-   //      advance();
-   //      return join_iterator(m_first1, m_last1, m_first2, m_last2, m_current2);
-   //   }
-
    value_type operator*() const {
-      return **m_first2;
+      return **m_inner_it;
    }
 
    friend bool operator==(const flatten_iterator& a, const flatten_iterator& b) {
       if (a.m_sentinel || b.m_sentinel)
-         return a.m_first1 == b.m_first1;
-      return a.m_first1 == b.m_first1 && *a.m_first2 == *b.m_first2;
+         return a.m_outer_it == b.m_outer_it;
+      return a.m_outer_it == b.m_outer_it && *a.m_inner_it == *b.m_inner_it;
    }
 
    friend bool operator!=(const flatten_iterator& a, const flatten_iterator& b) {
@@ -95,22 +82,21 @@ struct flatten_iterator : public std::iterator<std::input_iterator_tag, typename
    }
 
 private:
-   void advance() {
-      if (++(*m_first2) == (*m_last2)) {
-         ++m_first1;
-         if (m_first1 != m_last1) {
-            *m_first2 = (*m_first1).begin();
-            *m_last2  = (*m_first1).end();
+   void skip_to_next_inner_range() {
+      if (*m_inner_it == (*m_outer_it).end()) {
+         while (m_outer_it != m_outer_last && *m_inner_it == (*m_outer_it).end()) {
+            ++m_outer_it;
+            *m_inner_it = (*m_outer_it).begin();
          }
       }
    }
 
 private:
-   ForwardIt1 m_first1;
-   ForwardIt1 m_last1;
+   ForwardIt1 m_outer_it;
+   ForwardIt1 m_outer_last;
 
-   std::unique_ptr<ForwardIt2> m_first2;
-   std::unique_ptr<ForwardIt2> m_last2;
+   std::unique_ptr<ForwardIt2> m_inner_it;
+   //   std::unique_ptr<ForwardIt2> m_last2;
 
    bool m_sentinel;
 };
