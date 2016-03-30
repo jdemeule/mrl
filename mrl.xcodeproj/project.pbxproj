@@ -50,6 +50,7 @@
 		FE82E5BF1CAACEB20057DBB5 /* flatten_range.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = flatten_range.hpp; sourceTree = "<group>"; };
 		FEDC4CCB1C9F000900D56320 /* mrl */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mrl; sourceTree = BUILT_PRODUCTS_DIR; };
 		FEDC4CCE1C9F000900D56320 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		FEEA5D4C1CAC30820055A99D /* flatten_operator.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = flatten_operator.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +89,7 @@
 				FE82E5BD1CAAB8860057DBB5 /* join_operator.hpp */,
 				FE82E5BE1CAAC3E20057DBB5 /* for_each_range.hpp */,
 				FE82E5BF1CAACEB20057DBB5 /* flatten_range.hpp */,
+				FEEA5D4C1CAC30820055A99D /* flatten_operator.hpp */,
 			);
 			name = details;
 			sourceTree = "<group>";

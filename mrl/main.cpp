@@ -333,23 +333,6 @@ void join_linq_api() {
    std::cout << std::endl;
 }
 
-template <typename It>
-struct f_iterator {};
-
-
-template <typename It>
-void flatten(It first, It last) {
-   for (; first != last; ++first)
-      print_all(*first);
-}
-
-
-template <typename R>
-void flatten(const R& r) {
-   for (auto subRange : r) {
-      print_all(subRange);
-   }
-}
 
 void flatten_api() {
    using namespace mrl;
@@ -362,6 +345,17 @@ void flatten_api() {
    print_all(x);
 }
 
+void flatten_linq_api() {
+   using namespace mrl_linq;
+
+   std::cout << "flatten_linq_api" << std::endl;
+
+   std::vector<std::vector<int> > vvs = {{1}, {1, 2}, {1, 2, 3}};
+
+   auto x = from(vvs) | flatten();
+   print_all(x);
+}
+
 void flatten_api_2() {
    using namespace mrl;
 
@@ -371,6 +365,20 @@ void flatten_api_2() {
 
    auto x = make_take_n_range(make_flatten_range(ps), 6);
    print_all(x);
+}
+
+void flatten_linq_api_2() {
+   using namespace mrl_linq;
+
+   std::cout << "flatten_linq_api_2" << std::endl;
+
+   // clang-format off
+   auto ps = from(ints(1))
+      | select([](int z) { return ints(1, z + 1); })
+      | flatten()
+      | take(6);
+   // clang-format on
+   print_all(ps);
 }
 
 void flatten_api_3() {
@@ -386,8 +394,24 @@ void flatten_api_3() {
    }
    {
       auto x = make_filter_range(make_flatten_range(make_ref_range(vvs)), [](int x) { return x < 2; });
-      for (auto i = x.begin(); i != x.end(); ++i)
-         std::cout << *i;
+      print_all(x);
+   }
+}
+
+void flatten_linq_api_3() {
+   using namespace mrl_linq;
+
+   std::cout << "flatten_linq_api_3" << std::endl;
+
+   std::vector<std::vector<int> > vvs = {{1}, {1, 2}, {1, 2, 3}};
+
+   {
+      auto x = from(vvs) | flatten() | where([](int x) { return x > 2; });
+      print_all(x);
+   }
+   {
+      auto x = from(vvs) | flatten() | where([](int x) { return x < 2; });
+      print_all(x);
    }
 }
 
@@ -408,6 +432,22 @@ void flatten_api_4() {
    }
 }
 
+void flatten_linq_api_4() {
+   using namespace mrl_linq;
+
+   std::cout << "flatten_linq_api_4" << std::endl;
+
+   std::vector<std::vector<int> > vvs = {{}, {1, 2}, {}, {1, 2, 3}};
+
+   {
+      auto x = from(vvs) | flatten() | where([](int x) { return x > 2; });
+      print_all(x);
+   }
+   {
+      auto x = from(vvs) | flatten() | where([](int x) { return x < 2; });
+      print_all(x);
+   }
+}
 
 void pythagoreans_2() {
    using namespace mrl;
@@ -485,6 +525,37 @@ void pythagoreans_3() {
    }
 }
 
+void pythagoreans_linq() {
+   using namespace mrl_linq;
+   std::cout << "pythagoreans_linq" << std::endl;
+
+   // clang-format off
+   auto triples = from(ints(1))
+      | select([](int z) {
+         return from(ints(1, z + 1))
+            | select([=](int x) {
+               return from(ints(x, z + 1))
+                  | select([=](int y) { return std::make_tuple(x, y, z); })
+                  | where([](auto xyz) {
+                       auto x = std::get<0>(xyz);
+                       auto y = std::get<1>(xyz);
+                       auto z = std::get<2>(xyz);
+                       return x * x + y * y == z * z;
+                    });
+              })
+            | flatten();
+        })
+      | flatten();
+   // clang-format on
+
+   for (auto triple : triples | take(10)) {
+      std::cout << "{ " << std::get<0>(triple) << ", " << std::get<1>(triple) << ", " << std::get<2>(triple) << " }"
+                << std::endl;
+   }
+}
+
+
+
 template <typename InputIterator>
 struct cursor {
    typedef typename InputIterator::value_type value_type;
@@ -557,12 +628,17 @@ int main(int argc, const char* argv[]) {
 
 
    flatten_api();
+   flatten_linq_api();
    flatten_api_2();
+   flatten_linq_api_2();
    flatten_api_3();
+   flatten_linq_api_3();
    flatten_api_4();
+   flatten_linq_api_4();
 
    pythagoreans_2();
    pythagoreans_3();
+   pythagoreans_linq();
 
    //   mrl_linq::from(vs).where([](int x) -> bool { return x % 2 == 0; });
 
