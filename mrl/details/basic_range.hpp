@@ -12,6 +12,16 @@
 namespace mrl {
 
 struct basic_range {};
+
+struct finite_range_tag {};
+struct infinite_range_tag {};
+
+//   struct range_category\
+
+template <typename range_category>
+struct range : public basic_range {
+   typedef range_category category;
+};
 }
 
 #endif /* basic_range_h */

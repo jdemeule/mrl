@@ -73,6 +73,7 @@ private:
 };
 
 
+// could be finite or infinite
 template <typename T, typename Generator>
 struct nums_range : public basic_range {
    typedef nums_iterator<T, Generator> iterator;

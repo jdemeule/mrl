@@ -14,9 +14,10 @@
 namespace mrl {
 
 template <typename Ctn>
-struct owner_range : public basic_range {
+struct owner_range : public range<finite_range_tag> {
 public:
-   typedef typename Ctn::const_iterator iterator;
+   typedef typename Ctn::const_iterator const_iterator;
+   typedef const_iterator               iterator;
    typedef typename Ctn::value_type     value_type;
 
    explicit owner_range(Ctn&& ctn)

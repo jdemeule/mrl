@@ -15,8 +15,10 @@
 namespace mrl {
 
 template <typename ForwardIt>
-struct iterator_range : public basic_range {
+struct iterator_range : public range<finite_range_tag> {
 public:
+   typedef ForwardIt                      const_iterator;
+   typedef const_iterator                 iterator;
    typedef typename ForwardIt::value_type value_type;
 
    iterator_range(ForwardIt first, ForwardIt last)
