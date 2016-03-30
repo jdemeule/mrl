@@ -20,6 +20,7 @@ struct flatten_operator : public pipeable_operator {
    }
 };
 
+// todo: rename it as flatmap
 auto flatten() {
    return flatten_operator();
 }

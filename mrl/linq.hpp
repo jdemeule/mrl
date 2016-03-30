@@ -13,6 +13,7 @@
 #include "filter_operator.hpp"
 #include "flatten_operator.hpp"
 #include "join_operator.hpp"
+#include "mbind_operator.hpp"
 #include "pipeable_operator.hpp"
 #include "repeat_operator.hpp"
 #include "take_n_operator.hpp"

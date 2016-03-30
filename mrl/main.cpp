@@ -555,6 +555,33 @@ void pythagoreans_linq() {
 }
 
 
+void pythagoreans_linq_2() {
+   using namespace mrl_linq;
+   std::cout << "pythagoreans_linq_2" << std::endl;
+
+   // clang-format off
+   auto triples = from(ints(1))
+   | mbind([](int z) {
+      return from(ints(1, z + 1))
+      | mbind([=](int x) {
+         return from(ints(x, z + 1))
+         | select([=](int y) { return std::make_tuple(x, y, z); } )
+         | where([](auto xyz) {
+            auto x = std::get<0>(xyz);
+            auto y = std::get<1>(xyz);
+            auto z = std::get<2>(xyz);
+            return x * x + y * y == z * z;
+         } );
+      });
+   });
+   // clang-format on
+
+   for (auto triple : triples | take(10)) {
+      std::cout << "{ " << std::get<0>(triple) << ", " << std::get<1>(triple) << ", " << std::get<2>(triple) << " }"
+                << std::endl;
+   }
+}
+
 
 template <typename InputIterator>
 struct cursor {
@@ -639,6 +666,8 @@ int main(int argc, const char* argv[]) {
    pythagoreans_2();
    pythagoreans_3();
    pythagoreans_linq();
+   pythagoreans_linq_2();
+
 
    //   mrl_linq::from(vs).where([](int x) -> bool { return x % 2 == 0; });
 
