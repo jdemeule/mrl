@@ -52,6 +52,8 @@
 		FEEA5D641CAC3C900055A99D /* transform_range.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = transform_range.hpp; sourceTree = "<group>"; };
 		FEEA5D651CAC3C900055A99D /* zip_operator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = zip_operator.hpp; sourceTree = "<group>"; };
 		FEEA5D661CAC3C900055A99D /* zip_range.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = zip_range.hpp; sourceTree = "<group>"; };
+		FEEA5D671CAC83F40055A99D /* skip_range.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = skip_range.hpp; sourceTree = "<group>"; };
+		FEEA5D681CAC85F70055A99D /* skip_operator.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = skip_operator.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +122,8 @@
 				FEEA5D641CAC3C900055A99D /* transform_range.hpp */,
 				FEEA5D651CAC3C900055A99D /* zip_operator.hpp */,
 				FEEA5D661CAC3C900055A99D /* zip_range.hpp */,
+				FEEA5D671CAC83F40055A99D /* skip_range.hpp */,
+				FEEA5D681CAC85F70055A99D /* skip_operator.hpp */,
 			);
 			path = details;
 			sourceTree = "<group>";

@@ -16,6 +16,7 @@
 #include "details/mbind_operator.hpp"
 #include "details/pipeable_operator.hpp"
 #include "details/repeat_operator.hpp"
+#include "details/skip_operator.hpp"
 #include "details/take_n_operator.hpp"
 #include "details/transform_operator.hpp"
 #include "details/zip_operator.hpp"

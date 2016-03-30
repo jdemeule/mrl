@@ -18,6 +18,7 @@
 #include "details/owner_range.hpp"
 #include "details/ref_range.hpp"
 #include "details/repeat_range.hpp"
+#include "details/skip_range.hpp"
 #include "details/take_n_range.hpp"
 #include "details/transform_range.hpp"
 #include "details/zip_range.hpp"

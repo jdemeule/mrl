@@ -582,6 +582,26 @@ void pythagoreans_linq_2() {
    }
 }
 
+void skip_api() {
+   using namespace mrl;
+
+   std::cout << "skip_api" << std::endl;
+
+   auto values = make_skip_range(ints(1, 10), 2);
+
+   print_all(values);
+}
+
+void skip_linq_api() {
+   using namespace mrl_linq;
+
+   std::cout << "skip_linq_api" << std::endl;
+
+   auto values = from(ints(1, 10)) | skip(2);
+
+   print_all(values);
+}
+
 
 template <typename InputIterator>
 struct cursor {
@@ -667,6 +687,9 @@ int main(int argc, const char* argv[]) {
    pythagoreans_3();
    pythagoreans_linq();
    pythagoreans_linq_2();
+
+   skip_api();
+   skip_linq_api();
 
 
    //   mrl_linq::from(vs).where([](int x) -> bool { return x % 2 == 0; });
