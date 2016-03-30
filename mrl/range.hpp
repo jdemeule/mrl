@@ -8,19 +8,19 @@
 #ifndef range_h
 #define range_h
 
-#include "basic_range.hpp"
-#include "concat_range.hpp"
-#include "filter_range.hpp"
-#include "flatten_range.hpp"
-#include "iterator_range.hpp"
-#include "join_range.hpp"
-#include "num_range.hpp"
-#include "owner_range.hpp"
-#include "ref_range.hpp"
-#include "repeat_range.hpp"
-#include "take_n_range.hpp"
-#include "transform_range.hpp"
-#include "zip_range.hpp"
+#include "details/basic_range.hpp"
+#include "details/concat_range.hpp"
+#include "details/filter_range.hpp"
+#include "details/flatten_range.hpp"
+#include "details/iterator_range.hpp"
+#include "details/join_range.hpp"
+#include "details/num_range.hpp"
+#include "details/owner_range.hpp"
+#include "details/ref_range.hpp"
+#include "details/repeat_range.hpp"
+#include "details/take_n_range.hpp"
+#include "details/transform_range.hpp"
+#include "details/zip_range.hpp"
 
 #include <list>
 #include <map>
