@@ -32,6 +32,8 @@ TEST(range, filter) {
 
    std::vector<int> vs{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
+   make_filter_range(vs.begin(), vs.end(), [](auto x) { return true; });
+
    auto evens = make_filter_range(make_ref_range(vs), [](int x) { return x % 2 == 0; });
    ASSERT_EQ(expected.size(), std::distance(evens.begin(), evens.end()));
    ASSERT_EQ(expected, to_vector(evens));
@@ -689,6 +691,21 @@ TEST(range, skip_linq_api) {
 
    ASSERT_EQ(expected.size(), std::distance(r.begin(), r.end()));
    ASSERT_EQ(expected, r | to_vector());
+}
+
+template <typename It, typename Cat = mrl::range_iterator_category_t<It> >
+void foo_bar(It x) {}
+
+TEST(range, on_stream) {
+   using namespace mrl;
+
+   std::istringstream str("0.1 0.2 0.3 0.4");
+
+   auto r        = make_range(std::istream_iterator<double>(str), std::istream_iterator<double>());
+   auto filtered = make_filter_range(r, [](auto v) { return v > 0.2; });
+   auto vs       = to_vector(filtered);
+
+   EXPECT_EQ(2, vs.size());
 }
 
 template <typename InputIterator>

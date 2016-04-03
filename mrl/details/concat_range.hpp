@@ -27,13 +27,14 @@ struct concat_iterator : public std::iterator<std::input_iterator_tag, typename 
       , m_last2(last2) {}
 
    concat_iterator& operator++() {
-      advance();
+      next();
       return *this;
    }
 
    concat_iterator operator++(int) {
-      advance();
-      return concat_iterator(m_first1, m_last1, m_first2, m_last2);
+      auto tmp(*this);
+      next();
+      return tmp;
    }
 
    value_type operator*() const {
@@ -51,7 +52,7 @@ struct concat_iterator : public std::iterator<std::input_iterator_tag, typename 
    }
 
 private:
-   void advance() {
+   void next() {
       if (m_first1 != m_last1)
          ++m_first1;
       else

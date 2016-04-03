@@ -68,6 +68,13 @@ struct flatten_iterator : public std::iterator<std::input_iterator_tag, typename
       return *this;
    }
 
+   flatten_iterator operator++(int) {
+      auto tmp(*this);
+      ++*m_inner_it;
+      skip_to_next_inner_range();
+      return tmp;
+   }
+
    value_type operator*() const {
       return **m_inner_it;
    }
@@ -97,7 +104,6 @@ private:
    ForwardIt1 m_outer_last;
 
    std::unique_ptr<ForwardIt2> m_inner_it;
-   //   std::unique_ptr<ForwardIt2> m_last2;
 
    bool m_sentinel;
 };
@@ -114,13 +120,11 @@ struct flatten_range : public basic_range {
       , m_last(last1) {}
 
    iterator begin() const {
-      return iterator(m_first, m_last);  // iterator from *m_first
-      // iterator(m_first, m_last)
+      return iterator(m_first, m_last);
    }
 
    iterator end() const {
-      return iterator(m_last, m_last, true);  // sentinel
-      // sentinel
+      return iterator(m_last, m_last, true);
    }
 
 private:

@@ -35,9 +35,10 @@ struct zip_iterator
    }
 
    zip_iterator operator++(int) {
+      auto current(*this);
       ++m_first1;
       ++m_first2;
-      return zip_iterator(m_first1, m_last1, m_first2, m_last2);
+      return current;
    }
 
    value_type operator*() const {

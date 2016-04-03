@@ -16,7 +16,7 @@
 namespace mrl {
 
 template <typename ForwardIt>
-struct skip_iterator : public std::iterator<std::input_iterator_tag, typename ForwardIt::value_type> {
+struct skip_iterator : public std::iterator<range_iterator_category_t<ForwardIt>, typename ForwardIt::value_type> {
 
    typedef typename ForwardIt::value_type value_type;
 
@@ -32,10 +32,11 @@ struct skip_iterator : public std::iterator<std::input_iterator_tag, typename Fo
       return *this;
    }
 
-   //   take_n_iterator operator++(int) {
-   //      advance();
-   //      return take_n_iterator(m_first, m_last, m_count);
-   //   }
+   skip_iterator operator++(int) {
+      auto current(*this);
+      ++m_first;
+      return current;
+   }
 
    value_type operator*() const {
       return *m_first;

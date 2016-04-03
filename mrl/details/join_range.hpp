@@ -16,9 +16,12 @@
 
 namespace mrl {
 
+// rename to cross_join?
+// cartesian_join?
+
 template <typename ForwardIt1, typename ForwardIt2>
 struct join_iterator
-   : public std::iterator<std::forward_iterator_tag,
+   : public std::iterator<std::input_iterator_tag,
                           std::tuple<typename ForwardIt1::value_type, typename ForwardIt2::value_type> > {
 
    typedef std::tuple<typename ForwardIt1::value_type, typename ForwardIt2::value_type> value_type;
@@ -31,19 +34,17 @@ struct join_iterator
       , m_current2(current2) {}
 
    join_iterator& operator++() {
-      advance();
+      next();
       return *this;
    }
 
    join_iterator operator++(int) {
-      advance();
-      return join_iterator(*this);  // m_first1, m_last1, m_first2, m_last2, m_current2);
+      auto tmp(*this);
+      next();
+      return tmp;
    }
 
    value_type operator*() const {
-      //      if (m_first1 != m_last1)
-      //         return *m_first1;
-      //      return *m_first2;
       return std::make_tuple(*m_first1, *m_current2);
    }
 
@@ -56,7 +57,7 @@ struct join_iterator
    }
 
 private:
-   void advance() {
+   void next() {
       if (++m_current2 == m_last2) {
          ++m_first1;
          if (m_first1 != m_last1)

@@ -16,7 +16,7 @@
 namespace mrl {
 
 template <typename Value>
-struct repeat_iterator : public std::iterator<std::input_iterator_tag, Value> {
+struct repeat_iterator : public std::iterator<std::forward_iterator_tag, Value> {
 
    typedef Value value_type;
 

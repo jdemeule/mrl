@@ -17,8 +17,8 @@
 namespace mrl {
 
 template <typename ForwardIt, typename F>
-struct transform_iterator
-   : public std::iterator<std::input_iterator_tag, typename std::result_of<F(typename ForwardIt::value_type)>::type> {
+struct transform_iterator : public std::iterator<range_iterator_category_t<ForwardIt>,
+                                                 typename std::result_of<F(typename ForwardIt::value_type)>::type> {
 
    typedef typename std::result_of<F(typename ForwardIt::value_type)>::type value_type;
 
@@ -38,8 +38,9 @@ struct transform_iterator
    }
 
    transform_iterator operator++(int) {
+      auto current(*this);
       ++m_first;
-      return transform_iterator(m_first, m_last, m_apply);
+      return current;
    }
 
    value_type operator*() const {

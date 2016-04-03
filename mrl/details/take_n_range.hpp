@@ -14,8 +14,9 @@
 #include <mrl/details/basic_range.hpp>
 
 namespace mrl {
+
 template <typename ForwardIt>
-struct take_n_iterator : public std::iterator<std::input_iterator_tag, typename ForwardIt::value_type> {
+struct take_n_iterator : public std::iterator<range_iterator_category_t<ForwardIt>, typename ForwardIt::value_type> {
 
    typedef typename ForwardIt::value_type value_type;
 
@@ -26,14 +27,15 @@ struct take_n_iterator : public std::iterator<std::input_iterator_tag, typename 
       , m_sentinel(sentinel) {}
 
    take_n_iterator& operator++() {
-      advance();
+      next();
       return *this;
    }
 
-   //   take_n_iterator operator++(int) {
-   //      advance();
-   //      return take_n_iterator(m_first, m_last, m_count);
-   //   }
+   take_n_iterator operator++(int) {
+      auto current(*this);
+      next();
+      return current;
+   }
 
    value_type operator*() const {
       return *m_first;
@@ -50,10 +52,7 @@ struct take_n_iterator : public std::iterator<std::input_iterator_tag, typename 
    }
 
 private:
-   void advance() {
-      //      if (m_count == 0)
-      //         m_first = m_last;
-
+   void next() {
       if (m_first != m_last) {
          ++m_first;
          --m_count;
@@ -61,9 +60,6 @@ private:
 
       if (m_first == m_last)
          m_count = 0;
-
-      //      if (m_count == 0)
-      //         m_first = m_last;
    }
 
    ForwardIt   m_first;

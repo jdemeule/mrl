@@ -14,8 +14,13 @@
 
 namespace mrl {
 
+// not necessary an input_iterator
+// this will depends on int parameter, a forward is minimal to work
+// an input will limit the postfix increment.
+
 template <typename ForwardIt, typename Predicate>
-struct filter_iterator : public std::iterator<std::input_iterator_tag, typename ForwardIt::value_type> {
+struct filter_iterator : public std::iterator<range_iterator_category_t<ForwardIt>, typename ForwardIt::value_type> {
+
 
    typedef typename ForwardIt::value_type value_type;
 
@@ -23,21 +28,24 @@ struct filter_iterator : public std::iterator<std::input_iterator_tag, typename 
       : m_first(first)
       , m_last(last)
       , m_pred(pred) {
-      //      advance();
+      next();
    }
 
+
    filter_iterator& operator++() {
-      advance();
+      ++m_first;
+      next();
       return *this;
    }
 
    filter_iterator operator++(int) {
-      advance();
-      return filter_iterator(m_first, m_last, m_pred);
+      auto current = m_first;
+      ++m_first;
+      next();
+      return filter_iterator(current, m_last, m_pred);
    }
 
    value_type operator*() const {
-      //      advance();
       return *m_first;
    }
 
@@ -51,21 +59,17 @@ struct filter_iterator : public std::iterator<std::input_iterator_tag, typename 
    }
 
 private:
-   void advance() const {
-      //      do {
-      //         ++m_first;
-      //      } while (m_first != m_last && !m_pred(*m_first));
+   void next() {
       if (m_first == m_last)
          return;
 
-      do {
+      while (m_first != m_last && !m_pred(*m_first))
          ++m_first;
-      } while (m_first != m_last && !m_pred(*m_first));
    }
 
-   mutable ForwardIt m_first;
-   mutable ForwardIt m_last;
-   Predicate         m_pred;
+   ForwardIt m_first;
+   ForwardIt m_last;
+   Predicate m_pred;
 };
 
 
@@ -83,15 +87,7 @@ struct filter_range : public basic_range {
       , m_pred(pred) {}
 
    iterator begin() const {
-      ForwardIt first = m_first;
-      //      for (; first != m_last && !m_pred(*first); ++first)
-      //         ;
-      if (first == m_last)
-         return iterator(m_last, m_last, m_pred);
-
-      while (first != m_last && !m_pred(*first))
-         ++first;
-      return iterator(first, m_last, m_pred);
+      return iterator(m_first, m_last, m_pred);
    }
 
    iterator end() const {
