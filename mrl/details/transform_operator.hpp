@@ -10,7 +10,8 @@
 #define transform_operator_h
 
 
-#include "pipeable_operator.hpp"
+#include <mrl/details/pipeable_operator.hpp>
+#include <mrl/details/transform_range.hpp>
 
 namespace mrl_linq {
 template <typename F>

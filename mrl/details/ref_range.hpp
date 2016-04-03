@@ -9,7 +9,7 @@
 #ifndef ref_range_h
 #define ref_range_h
 
-#include "basic_range.hpp"
+#include <mrl/details/basic_range.hpp>
 
 namespace mrl {
 template <typename Ctn>

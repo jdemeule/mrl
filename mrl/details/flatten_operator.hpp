@@ -9,7 +9,8 @@
 #ifndef flatten_operator_h
 #define flatten_operator_h
 
-#include "pipeable_operator.hpp"
+#include <mrl/details/flatten_range.hpp>
+#include <mrl/details/pipeable_operator.hpp>
 
 namespace mrl_linq {
 

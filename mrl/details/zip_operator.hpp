@@ -9,7 +9,8 @@
 #ifndef zip_operator_h
 #define zip_operator_h
 
-#include "pipeable_operator.hpp"
+#include <mrl/details/pipeable_operator.hpp>
+#include <mrl/details/zip_range.hpp>
 
 namespace mrl_linq {
 

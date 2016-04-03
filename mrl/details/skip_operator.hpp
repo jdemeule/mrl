@@ -9,6 +9,9 @@
 #ifndef skip_operator_h
 #define skip_operator_h
 
+#include <mrl/details/pipeable_operator.hpp>
+#include <mrl/details/skip_range.hpp>
+
 namespace mrl_linq {
 
 struct skip_operator : public pipeable_operator {

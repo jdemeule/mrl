@@ -9,7 +9,7 @@
 #ifndef stream_h
 #define stream_h
 
-#include "range.hpp"
+#include <mrl/range.hpp>
 
 namespace mrl_stream {
 using namespace ::mrl;

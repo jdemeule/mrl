@@ -9,7 +9,7 @@
 #ifndef join_operator_h
 #define join_operator_h
 
-#include "pipeable_operator.hpp"
+#include <mrl/details/pipeable_operator.hpp>
 
 namespace mrl_linq {
 

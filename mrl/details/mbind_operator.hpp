@@ -9,9 +9,9 @@
 #ifndef mbind_operator_h
 #define mbind_operator_h
 
-#include "flatten_operator.hpp"
-#include "pipeable_operator.hpp"
-#include "transform_operator.hpp"
+#include <mrl/details/flatten_operator.hpp>
+#include <mrl/details/pipeable_operator.hpp>
+#include <mrl/details/transform_operator.hpp>
 
 namespace mrl_linq {
 

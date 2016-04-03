@@ -9,7 +9,8 @@
 #ifndef filter_operator_h
 #define filter_operator_h
 
-#include "pipeable_operator.hpp"
+#include <mrl/details/filter_range.hpp>
+#include <mrl/details/pipeable_operator.hpp>
 
 namespace mrl_linq {
 template <typename Predicate>

@@ -9,7 +9,8 @@
 #ifndef take_n_operator_h
 #define take_n_operator_h
 
-#include "pipeable_operator.hpp"
+#include <mrl/details/pipeable_operator.hpp>
+#include <mrl/details/take_n_range.hpp>
 
 namespace mrl_linq {
 struct take_n_operator : public pipeable_operator {

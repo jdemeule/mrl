@@ -10,16 +10,16 @@
 #define linq_h
 
 #include <mrl/details/concat_operator.hpp>
-#include "details/filter_operator.hpp"
-#include "details/flatten_operator.hpp"
-#include "details/join_operator.hpp"
-#include "details/mbind_operator.hpp"
-#include "details/pipeable_operator.hpp"
-#include "details/repeat_operator.hpp"
-#include "details/skip_operator.hpp"
-#include "details/take_n_operator.hpp"
-#include "details/transform_operator.hpp"
-#include "details/zip_operator.hpp"
+#include <mrl/details/filter_operator.hpp>
+#include <mrl/details/flatten_operator.hpp>
+#include <mrl/details/join_operator.hpp>
+#include <mrl/details/mbind_operator.hpp>
+#include <mrl/details/pipeable_operator.hpp>
+#include <mrl/details/repeat_operator.hpp>
+#include <mrl/details/skip_operator.hpp>
+#include <mrl/details/take_n_operator.hpp>
+#include <mrl/details/transform_operator.hpp>
+#include <mrl/details/zip_operator.hpp>
 
 namespace mrl_linq {
 // using namespace ::mrl;

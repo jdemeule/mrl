@@ -9,7 +9,8 @@
 #ifndef concat_operator_h
 #define concat_operator_h
 
-#include "pipeable_operator.hpp"
+#include <mrl/details/concat_range.hpp>
+#include <mrl/details/pipeable_operator.hpp>
 
 namespace mrl_linq {
 
