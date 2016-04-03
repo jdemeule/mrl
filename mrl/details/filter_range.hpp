@@ -18,13 +18,13 @@ namespace mrl {
 // this will depends on int parameter, a forward is minimal to work
 // an input will limit the postfix increment.
 
-template <typename ForwardIt, typename Predicate>
-struct filter_iterator : public std::iterator<range_iterator_category_t<ForwardIt>, typename ForwardIt::value_type> {
+template <typename InputIt, typename Predicate>
+struct filter_iterator : public std::iterator<range_iterator_category_t<InputIt>, typename InputIt::value_type> {
 
 
-   typedef typename ForwardIt::value_type value_type;
+   typedef typename InputIt::value_type value_type;
 
-   filter_iterator(ForwardIt first, ForwardIt last, Predicate pred)
+   filter_iterator(InputIt first, InputIt last, Predicate pred)
       : m_first(first)
       , m_last(last)
       , m_pred(pred) {
@@ -67,21 +67,21 @@ private:
          ++m_first;
    }
 
-   ForwardIt m_first;
-   ForwardIt m_last;
+   InputIt   m_first;
+   InputIt   m_last;
    Predicate m_pred;
 };
 
 
 
-template <typename ForwardIt, typename Predicate>
+template <typename InputIt, typename Predicate>
 struct filter_range : public basic_range {
 
-   typedef filter_iterator<ForwardIt, Predicate> iterator;
-   typedef filter_iterator<ForwardIt, Predicate> const_iterator;
-   typedef typename ForwardIt::value_type value_type;
+   typedef filter_iterator<InputIt, Predicate> iterator;
+   typedef filter_iterator<InputIt, Predicate> const_iterator;
+   typedef typename InputIt::value_type value_type;
 
-   filter_range(ForwardIt first, ForwardIt last, Predicate pred)
+   filter_range(InputIt first, InputIt last, Predicate pred)
       : m_first(first)
       , m_last(last)
       , m_pred(pred) {}
@@ -95,21 +95,19 @@ struct filter_range : public basic_range {
    }
 
 private:
-   ForwardIt m_first;
-   ForwardIt m_last;
+   InputIt   m_first;
+   InputIt   m_last;
    Predicate m_pred;
 };
 
-template <typename ForwardIt, typename Predicate>
-filter_range<ForwardIt, Predicate> make_filter_range(ForwardIt first, ForwardIt last, Predicate pred) {
-   return filter_range<ForwardIt, Predicate>(first, last, pred);
+template <typename InputIt, typename Predicate>
+auto make_filter_range(InputIt first, InputIt last, Predicate pred) {
+   return filter_range<InputIt, Predicate>(first, last, pred);
 }
 
-template <typename Rg,
-          typename Predicate,
-          typename std::enable_if<std::is_base_of<basic_range, Rg>::value>::type* = nullptr>
-filter_range<typename Rg::iterator, Predicate> make_filter_range(const Rg& rg, Predicate pred) {
-   return filter_range<typename Rg::iterator, Predicate>(rg.begin(), rg.end(), pred);
+template <typename R, typename Predicate, typename std::enable_if_t<is_range<R>::value>* = nullptr>
+auto make_filter_range(const R& r, Predicate pred) {
+   return filter_range<typename R::iterator, Predicate>(r.begin(), r.end(), pred);
 };
 }
 

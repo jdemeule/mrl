@@ -15,12 +15,12 @@
 
 namespace mrl {
 
-template <typename ForwardIt>
-struct take_n_iterator : public std::iterator<range_iterator_category_t<ForwardIt>, typename ForwardIt::value_type> {
+template <typename InputIt>
+struct take_n_iterator : public std::iterator<range_iterator_category_t<InputIt>, typename InputIt::value_type> {
 
-   typedef typename ForwardIt::value_type value_type;
+   typedef typename InputIt::value_type value_type;
 
-   take_n_iterator(ForwardIt first, ForwardIt last, std::size_t count, bool sentinel = false)
+   take_n_iterator(InputIt first, InputIt last, std::size_t count, bool sentinel = false)
       : m_first(first)
       , m_last(last)
       , m_count(count)
@@ -62,20 +62,20 @@ private:
          m_count = 0;
    }
 
-   ForwardIt   m_first;
-   ForwardIt   m_last;
+   InputIt     m_first;
+   InputIt     m_last;
    std::size_t m_count;
    bool        m_sentinel;
 };
 
-template <typename ForwardIt>
+template <typename InputIt>
 struct take_n_range : public basic_range {
 
-   typedef take_n_iterator<ForwardIt>     iterator;
-   typedef take_n_iterator<ForwardIt>     const_iterator;
-   typedef typename ForwardIt::value_type value_type;
+   typedef take_n_iterator<InputIt>     iterator;
+   typedef take_n_iterator<InputIt>     const_iterator;
+   typedef typename InputIt::value_type value_type;
 
-   take_n_range(ForwardIt first, ForwardIt last, std::size_t count)
+   take_n_range(InputIt first, InputIt last, std::size_t count)
       : m_first(first)
       , m_last(last)
       , m_count(count) {}
@@ -89,19 +89,19 @@ struct take_n_range : public basic_range {
    }
 
 private:
-   ForwardIt   m_first;
-   ForwardIt   m_last;
+   InputIt     m_first;
+   InputIt     m_last;
    std::size_t m_count;
 };
 
-template <typename ForwardIt>
-take_n_range<ForwardIt> make_take_n_range(ForwardIt first, ForwardIt last, std::size_t count) {
-   return take_n_range<ForwardIt>(first, last, count);
+template <typename InputIt>
+auto make_take_n_range(InputIt first, InputIt last, std::size_t count) {
+   return take_n_range<InputIt>(first, last, count);
 }
 
-template <typename Rg, typename std::enable_if<std::is_base_of<basic_range, Rg>::value>::type* = nullptr>
-take_n_range<typename Rg::iterator> make_take_n_range(const Rg& rg, std::size_t count) {
-   return take_n_range<typename Rg::iterator>(rg.begin(), rg.end(), count);
+template <typename R, typename std::enable_if_t<is_range<R>::value>* = nullptr>
+auto make_take_n_range(const R& r, std::size_t count) {
+   return take_n_range<typename R::iterator>(r.begin(), r.end(), count);
 };
 }
 

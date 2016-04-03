@@ -36,9 +36,9 @@ private:
 
 
 
-template <typename Rg>
-ref_range<Rg> make_ref_range(const Rg& rg) {
-   return ref_range<Rg>(rg);
+template <typename R>
+auto make_ref_range(const R& r) {
+   return ref_range<R>(r);
 };
 }
 

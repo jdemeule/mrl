@@ -19,20 +19,20 @@
 namespace mrl {
 
 
-template <typename ForwardIt1>
-struct flatten_iterator : public std::iterator<std::input_iterator_tag, typename ForwardIt1::value_type::value_type> {
+template <typename InputIt>
+struct flatten_iterator : public std::iterator<std::input_iterator_tag, typename InputIt::value_type::value_type> {
 
-   typedef typename ForwardIt1::value_type::const_iterator ForwardIt2;
-   typedef typename ForwardIt2::value_type                 value_type;
+   typedef typename InputIt::value_type::const_iterator InnerIt;
+   typedef typename InnerIt::value_type                 value_type;
 
 
-   flatten_iterator(ForwardIt1 first, ForwardIt1 last, bool sentinel = false)
+   flatten_iterator(InputIt first, InputIt last, bool sentinel = false)
       : m_outer_it(first)
       , m_outer_last(last)
       , m_inner_it()
       , m_sentinel(sentinel) {
       if (m_outer_it != m_outer_last) {
-         m_inner_it = std::make_unique<ForwardIt2>((*m_outer_it).begin());
+         m_inner_it = std::make_unique<InnerIt>((*m_outer_it).begin());
          skip_to_next_inner_range();
       }
    }
@@ -43,7 +43,7 @@ struct flatten_iterator : public std::iterator<std::input_iterator_tag, typename
       , m_inner_it()
       , m_sentinel(rhs.m_sentinel) {
       if (m_outer_it != m_outer_last) {
-         m_inner_it = std::make_unique<ForwardIt2>(*rhs.m_inner_it);
+         m_inner_it = std::make_unique<InnerIt>(*rhs.m_inner_it);
       }
    }
 
@@ -100,22 +100,22 @@ private:
    }
 
 private:
-   ForwardIt1 m_outer_it;
-   ForwardIt1 m_outer_last;
+   InputIt m_outer_it;
+   InputIt m_outer_last;
 
-   std::unique_ptr<ForwardIt2> m_inner_it;
+   std::unique_ptr<InnerIt> m_inner_it;
 
    bool m_sentinel;
 };
 
-template <typename ForwardIt>
+template <typename InputIt>
 struct flatten_range : public basic_range {
 
-   typedef flatten_iterator<ForwardIt>                iterator;
-   typedef flatten_iterator<ForwardIt>                const_iterator;
-   typedef typename ForwardIt::value_type::value_type value_type;
+   typedef flatten_iterator<InputIt>                iterator;
+   typedef flatten_iterator<InputIt>                const_iterator;
+   typedef typename InputIt::value_type::value_type value_type;
 
-   flatten_range(ForwardIt first1, ForwardIt last1)
+   flatten_range(InputIt first1, InputIt last1)
       : m_first(first1)
       , m_last(last1) {}
 
@@ -128,15 +128,19 @@ struct flatten_range : public basic_range {
    }
 
 private:
-   ForwardIt m_first;
-   ForwardIt m_last;
+   InputIt m_first;
+   InputIt m_last;
 };
 
 
+template <typename InputIt>
+auto make_flatten_range(InputIt first, InputIt last) {
+   return flatten_range<InputIt>(first, last);
+}
 
-template <typename R1>
-auto make_flatten_range(const R1& r1) {
-   return flatten_range<typename R1::iterator>(r1.begin(), r1.end());
+template <typename R, typename std::enable_if_t<is_range<R>::value>* = nullptr>
+auto make_flatten_range(const R& r) {
+   return flatten_range<typename R::iterator>(r.begin(), r.end());
 }
 }
 

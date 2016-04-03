@@ -16,18 +16,18 @@
 
 namespace mrl {
 
-template <typename ForwardIt, typename F>
-struct transform_iterator : public std::iterator<range_iterator_category_t<ForwardIt>,
-                                                 typename std::result_of<F(typename ForwardIt::value_type)>::type> {
+template <typename InputIt, typename F>
+struct transform_iterator : public std::iterator<range_iterator_category_t<InputIt>,
+                                                 typename std::result_of<F(typename InputIt::value_type)>::type> {
 
-   typedef typename std::result_of<F(typename ForwardIt::value_type)>::type value_type;
+   typedef typename std::result_of<F(typename InputIt::value_type)>::type value_type;
 
    transform_iterator()
       : m_first()
       , m_last()
       , m_apply() {}
 
-   transform_iterator(ForwardIt first, ForwardIt last, F apply)
+   transform_iterator(InputIt first, InputIt last, F apply)
       : m_first(first)
       , m_last(last)
       , m_apply(apply) {}
@@ -56,19 +56,19 @@ struct transform_iterator : public std::iterator<range_iterator_category_t<Forwa
    }
 
 private:
-   ForwardIt m_first;
-   ForwardIt m_last;
-   F         m_apply;
+   InputIt m_first;
+   InputIt m_last;
+   F       m_apply;
 };
 
-template <typename ForwardIt, typename F>
+template <typename InputIt, typename F>
 struct transform_range : public basic_range {
 
-   typedef transform_iterator<ForwardIt, F> const_iterator;
-   typedef transform_iterator<ForwardIt, F> iterator;
-   typedef typename std::result_of<F(typename ForwardIt::value_type)>::type value_type;
+   typedef transform_iterator<InputIt, F> const_iterator;
+   typedef transform_iterator<InputIt, F> iterator;
+   typedef typename std::result_of<F(typename InputIt::value_type)>::type value_type;
 
-   transform_range(ForwardIt first, ForwardIt last, F apply)
+   transform_range(InputIt first, InputIt last, F apply)
       : m_first(first)
       , m_last(last)
       , m_apply(apply) {}
@@ -82,19 +82,19 @@ struct transform_range : public basic_range {
    }
 
 private:
-   ForwardIt m_first;
-   ForwardIt m_last;
-   F         m_apply;
+   InputIt m_first;
+   InputIt m_last;
+   F       m_apply;
 };
 
-template <typename ForwardIt, typename F>
-transform_range<ForwardIt, F> make_transform_range(ForwardIt first, ForwardIt last, F apply) {
-   return transform_range<ForwardIt, F>(first, last, apply);
+template <typename InputIt, typename F>
+auto make_transform_range(InputIt first, InputIt last, F apply) {
+   return transform_range<InputIt, F>(first, last, apply);
 }
 
-template <typename Rg, typename F, typename std::enable_if<std::is_base_of<basic_range, Rg>::value>::type* = nullptr>
-transform_range<typename Rg::iterator, F> make_transform_range(const Rg& rg, F apply) {
-   return transform_range<typename Rg::iterator, F>(rg.begin(), rg.end(), apply);
+template <typename R, typename F, typename std::enable_if_t<is_range<R>::value>* = nullptr>
+auto make_transform_range(const R& r, F apply) {
+   return transform_range<typename R::iterator, F>(r.begin(), r.end(), apply);
 };
 }
 

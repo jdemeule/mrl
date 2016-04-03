@@ -35,9 +35,9 @@ private:
    Ctn m_ctn;
 };
 
-template <typename Rg>
-owner_range<Rg> make_range(Rg&& r) {
-   return owner_range<Rg>(std::move(r));
+template <typename R>
+auto make_range(R&& r) {
+   return owner_range<R>(std::move(r));
 }
 }
 

@@ -14,33 +14,33 @@
 
 namespace mrl {
 
-template <typename ForwardIt>
+template <typename Iterator>
 struct iterator_range : public range<finite_range_tag> {
 public:
-   typedef ForwardIt                      const_iterator;
-   typedef const_iterator                 iterator;
-   typedef typename ForwardIt::value_type value_type;
+   typedef Iterator                      const_iterator;
+   typedef const_iterator                iterator;
+   typedef typename Iterator::value_type value_type;
 
-   iterator_range(ForwardIt first, ForwardIt last)
+   iterator_range(Iterator first, Iterator last)
       : m_first(first)
       , m_last(last) {}
 
-   ForwardIt begin() const {
+   Iterator begin() const {
       return m_first;
    }
 
-   ForwardIt end() const {
+   Iterator end() const {
       return m_last;
    }
 
 private:
-   ForwardIt m_first;
-   ForwardIt m_last;
+   Iterator m_first;
+   Iterator m_last;
 };
 
-template <typename ForwardIt>
-iterator_range<ForwardIt> make_range(ForwardIt first, ForwardIt last) {
-   return iterator_range<ForwardIt>(first, last);
+template <typename Iterator>
+auto make_range(Iterator first, Iterator last) {
+   return iterator_range<Iterator>(first, last);
 }
 }
 

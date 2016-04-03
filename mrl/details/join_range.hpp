@@ -19,14 +19,14 @@ namespace mrl {
 // rename to cross_join?
 // cartesian_join?
 
-template <typename ForwardIt1, typename ForwardIt2>
+template <typename InputIt1, typename ForwardIt2>
 struct join_iterator
    : public std::iterator<std::input_iterator_tag,
-                          std::tuple<typename ForwardIt1::value_type, typename ForwardIt2::value_type> > {
+                          std::tuple<typename InputIt1::value_type, typename ForwardIt2::value_type> > {
 
-   typedef std::tuple<typename ForwardIt1::value_type, typename ForwardIt2::value_type> value_type;
+   typedef std::tuple<typename InputIt1::value_type, typename ForwardIt2::value_type> value_type;
 
-   join_iterator(ForwardIt1 first1, ForwardIt1 last1, ForwardIt2 first2, ForwardIt2 last2, ForwardIt2 current2)
+   join_iterator(InputIt1 first1, InputIt1 last1, ForwardIt2 first2, ForwardIt2 last2, ForwardIt2 current2)
       : m_first1(first1)
       , m_last1(last1)
       , m_first2(first2)
@@ -66,8 +66,8 @@ private:
    }
 
 private:
-   ForwardIt1 m_first1;
-   ForwardIt1 m_last1;
+   InputIt1   m_first1;
+   InputIt1   m_last1;
    ForwardIt2 m_first2;
    ForwardIt2 m_last2;
    ForwardIt2 m_current2;
@@ -75,13 +75,13 @@ private:
 
 // variadic template on
 // typename...ItRanges
-template <typename ForwardIt1, typename ForwardIt2>
+template <typename InputIt1, typename ForwardIt2>
 struct join_range : public basic_range {
 
-   typedef join_iterator<ForwardIt1, ForwardIt2>                                        iterator;
-   typedef std::tuple<typename ForwardIt1::value_type, typename ForwardIt2::value_type> value_type;
+   typedef join_iterator<InputIt1, ForwardIt2>                                        iterator;
+   typedef std::tuple<typename InputIt1::value_type, typename ForwardIt2::value_type> value_type;
 
-   join_range(ForwardIt1 first1, ForwardIt1 last1, ForwardIt2 first2, ForwardIt2 last2)
+   join_range(InputIt1 first1, InputIt1 last1, ForwardIt2 first2, ForwardIt2 last2)
       : m_first1(first1)
       , m_last1(last1)
       , m_first2(first2)
@@ -96,16 +96,23 @@ struct join_range : public basic_range {
    }
 
 private:
-   ForwardIt1 m_first1;
-   ForwardIt1 m_last1;
+   InputIt1   m_first1;
+   InputIt1   m_last1;
    ForwardIt2 m_first2;
    ForwardIt2 m_last2;
    // store tuple of ItRanges
 };
 
 
+template <typename InputIt1, typename InputIt2>
+auto make_join_range(InputIt1 first1, InputIt2 last1, InputIt2 first2, InputIt2 last2) {
+   return join_range<InputIt1, InputIt2>(first1, last1, first2, last2);
+}
 
-template <typename R1, typename R2>
+template <typename R1,
+          typename R2,
+          typename std::enable_if_t<is_range<R1>::value>* = nullptr,
+          typename std::enable_if_t<is_range<R2>::value>* = nullptr>
 auto make_join_range(const R1& r1, const R2& r2) {
    // transform typename...Rs to std::tuple<iterator_range<Rs::iterator>...)
    return join_range<typename R1::iterator, typename R2::iterator>(r1.begin(), r1.end(), r2.begin(), r2.end());

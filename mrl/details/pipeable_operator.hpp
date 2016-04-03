@@ -27,9 +27,9 @@ auto operator|(const Rg& r, Op op) {
 }
 
 
-template <typename Rg>
-auto from(const Rg& rg) {
-   return make_ref_range(rg);
+template <typename R>
+auto from(const R& r) {
+   return make_ref_range(r);
 }
 }
 

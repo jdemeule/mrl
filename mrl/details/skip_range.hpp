@@ -15,12 +15,12 @@
 
 namespace mrl {
 
-template <typename ForwardIt>
-struct skip_iterator : public std::iterator<range_iterator_category_t<ForwardIt>, typename ForwardIt::value_type> {
+template <typename InputIt>
+struct skip_iterator : public std::iterator<range_iterator_category_t<InputIt>, typename InputIt::value_type> {
 
-   typedef typename ForwardIt::value_type value_type;
+   typedef typename InputIt::value_type value_type;
 
-   skip_iterator(ForwardIt first, ForwardIt last, std::size_t count)
+   skip_iterator(InputIt first, InputIt last, std::size_t count)
       : m_first(first)
       , m_last(last)
       , m_count(count) {
@@ -61,19 +61,19 @@ private:
          m_count = 0;
    }
 
-   ForwardIt   m_first;
-   ForwardIt   m_last;
+   InputIt     m_first;
+   InputIt     m_last;
    std::size_t m_count;
 };
 
-template <typename ForwardIt>
+template <typename InputIt>
 struct skip_range : public basic_range {
 
-   typedef skip_iterator<ForwardIt>       iterator;
-   typedef skip_iterator<ForwardIt>       const_iterator;
-   typedef typename ForwardIt::value_type value_type;
+   typedef skip_iterator<InputIt>       iterator;
+   typedef skip_iterator<InputIt>       const_iterator;
+   typedef typename InputIt::value_type value_type;
 
-   skip_range(ForwardIt first, ForwardIt last, std::size_t count)
+   skip_range(InputIt first, InputIt last, std::size_t count)
       : m_first(first)
       , m_last(last)
       , m_count(count) {}
@@ -87,19 +87,19 @@ struct skip_range : public basic_range {
    }
 
 private:
-   ForwardIt   m_first;
-   ForwardIt   m_last;
+   InputIt     m_first;
+   InputIt     m_last;
    std::size_t m_count;
 };
 
-template <typename ForwardIt>
-skip_range<ForwardIt> make_skip_range(ForwardIt first, ForwardIt last, std::size_t count) {
-   return skip_range<ForwardIt>(first, last, count);
+template <typename InputIt>
+auto make_skip_range(InputIt first, InputIt last, std::size_t count) {
+   return skip_range<InputIt>(first, last, count);
 }
 
-template <typename Rg, typename std::enable_if<std::is_base_of<basic_range, Rg>::value>::type* = nullptr>
-skip_range<typename Rg::iterator> make_skip_range(const Rg& rg, std::size_t count) {
-   return skip_range<typename Rg::iterator>(rg.begin(), rg.end(), count);
+template <typename R, typename std::enable_if_t<is_range<R>::value>* = nullptr>
+auto make_skip_range(const R& r, std::size_t count) {
+   return skip_range<typename R::iterator>(r.begin(), r.end(), count);
 };
 }
 

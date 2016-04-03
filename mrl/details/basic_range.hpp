@@ -100,6 +100,10 @@ template <typename range_category>
 struct range : public basic_range {
    typedef range_category category;
 };
+
+
+template <typename R>
+struct is_range : public std::is_base_of<basic_range, R> {};
 }
 
 #endif /* basic_range_h */

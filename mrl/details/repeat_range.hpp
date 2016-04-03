@@ -71,7 +71,7 @@ private:
 };
 
 template <typename value_type>
-repeat_range<value_type> make_repeat_range(value_type value) {
+auto make_repeat_range(value_type value) {
    return repeat_range<value_type>(value);
 }
 }

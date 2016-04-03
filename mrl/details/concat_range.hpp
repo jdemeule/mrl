@@ -15,12 +15,12 @@
 
 namespace mrl {
 
-template <typename ForwardIt1, typename ForwardIt2>
-struct concat_iterator : public std::iterator<std::input_iterator_tag, typename ForwardIt1::value_type> {
+template <typename InputIt1, typename InputIt2>
+struct concat_iterator : public std::iterator<std::input_iterator_tag, typename InputIt1::value_type> {
 
-   typedef typename ForwardIt1::value_type value_type;
+   typedef typename InputIt1::value_type value_type;
 
-   concat_iterator(ForwardIt1 first1, ForwardIt1 last1, ForwardIt2 first2, ForwardIt2 last2)
+   concat_iterator(InputIt1 first1, InputIt1 last1, InputIt2 first2, InputIt2 last2)
       : m_first1(first1)
       , m_last1(last1)
       , m_first2(first2)
@@ -60,19 +60,19 @@ private:
    }
 
 private:
-   ForwardIt1 m_first1;
-   ForwardIt1 m_last1;
-   ForwardIt2 m_first2;
-   ForwardIt2 m_last2;
+   InputIt1 m_first1;
+   InputIt1 m_last1;
+   InputIt2 m_first2;
+   InputIt2 m_last2;
 };
 
-template <typename ForwardIt1, typename ForwardIt2>
+template <typename InputIt1, typename InputIt2>
 struct concat_range : public basic_range {
 
-   typedef concat_iterator<ForwardIt1, ForwardIt2> iterator;
-   typedef typename ForwardIt1::value_type value_type;
+   typedef concat_iterator<InputIt1, InputIt2> iterator;
+   typedef typename InputIt1::value_type value_type;
 
-   concat_range(ForwardIt1 first1, ForwardIt1 last1, ForwardIt2 first2, ForwardIt2 last2)
+   concat_range(InputIt1 first1, InputIt1 last1, InputIt2 first2, InputIt2 last2)
       : m_first1(first1)
       , m_last1(last1)
       , m_first2(first2)
@@ -87,15 +87,25 @@ struct concat_range : public basic_range {
    }
 
 private:
-   ForwardIt1 m_first1;
-   ForwardIt1 m_last1;
-   ForwardIt2 m_first2;
-   ForwardIt2 m_last2;
+   InputIt1 m_first1;
+   InputIt1 m_last1;
+   InputIt2 m_first2;
+   InputIt2 m_last2;
 };
 
 
 
-template <typename R1, typename R2>
+template <typename InputIt1, typename InputIt2>
+auto make_concat_range(InputIt1 first1, InputIt2 last1, InputIt2 first2, InputIt2 last2) {
+   return concat_range<InputIt1, InputIt2>(first1, last1, first2, last2);
+}
+
+
+
+template <typename R1,
+          typename R2,
+          typename std::enable_if_t<is_range<R1>::value>* = nullptr,
+          typename std::enable_if_t<is_range<R2>::value>* = nullptr>
 auto make_concat_range(const R1& r1, const R2& r2) {
    return concat_range<typename R1::iterator, typename R2::iterator>(r1.begin(), r1.end(), r2.begin(), r2.end());
 }
