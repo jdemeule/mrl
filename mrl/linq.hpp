@@ -9,7 +9,7 @@
 #ifndef linq_h
 #define linq_h
 
-#include "details/concat_operator.hpp"
+#include <mrl/details/concat_operator.hpp>
 #include "details/filter_operator.hpp"
 #include "details/flatten_operator.hpp"
 #include "details/join_operator.hpp"

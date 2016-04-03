@@ -10,7 +10,8 @@
 #define pipeable_operator_h
 
 #include <type_traits>
-#include "range.hpp"
+
+#include <mrl/range.hpp>
 
 namespace mrl_linq {
 using namespace ::mrl;

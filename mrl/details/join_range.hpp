@@ -17,7 +17,7 @@ namespace mrl {
 
 template <typename ForwardIt1, typename ForwardIt2>
 struct join_iterator
-   : public std::iterator<std::input_iterator_tag,
+   : public std::iterator<std::forward_iterator_tag,
                           std::tuple<typename ForwardIt1::value_type, typename ForwardIt2::value_type> > {
 
    typedef std::tuple<typename ForwardIt1::value_type, typename ForwardIt2::value_type> value_type;
@@ -76,8 +76,8 @@ private:
 template <typename ForwardIt1, typename ForwardIt2>
 struct join_range : public basic_range {
 
-   typedef join_iterator<ForwardIt1, ForwardIt2> iterator;
-   typedef typename ForwardIt1::value_type value_type;
+   typedef join_iterator<ForwardIt1, ForwardIt2>                                        iterator;
+   typedef std::tuple<typename ForwardIt1::value_type, typename ForwardIt2::value_type> value_type;
 
    join_range(ForwardIt1 first1, ForwardIt1 last1, ForwardIt2 first2, ForwardIt2 last2)
       : m_first1(first1)
