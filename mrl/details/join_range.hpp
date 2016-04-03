@@ -36,7 +36,7 @@ struct join_iterator
 
    join_iterator operator++(int) {
       advance();
-      return join_iterator(m_first1, m_last1, m_first2, m_last2, m_current2);
+      return join_iterator(*this);  // m_first1, m_last1, m_first2, m_last2, m_current2);
    }
 
    value_type operator*() const {
@@ -71,6 +71,8 @@ private:
    ForwardIt2 m_current2;
 };
 
+// variadic template on
+// typename...ItRanges
 template <typename ForwardIt1, typename ForwardIt2>
 struct join_range : public basic_range {
 
@@ -96,12 +98,14 @@ private:
    ForwardIt1 m_last1;
    ForwardIt2 m_first2;
    ForwardIt2 m_last2;
+   // store tuple of ItRanges
 };
 
 
 
 template <typename R1, typename R2>
 auto make_join_range(const R1& r1, const R2& r2) {
+   // transform typename...Rs to std::tuple<iterator_range<Rs::iterator>...)
    return join_range<typename R1::iterator, typename R2::iterator>(r1.begin(), r1.end(), r2.begin(), r2.end());
 }
 }
