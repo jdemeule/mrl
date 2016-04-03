@@ -708,6 +708,21 @@ TEST(range, on_stream) {
    EXPECT_EQ(2, vs.size());
 }
 
+TEST(range, chunk) {
+   using namespace mrl;
+
+   auto r = make_chunk_range(ints(0, 10), 2);
+
+   std::vector<std::vector<int> > expected{{0, 1}, {2, 3}, {4, 5}, {6, 7}, {8, 9}};
+   EXPECT_EQ(expected.size(), std::distance(r.begin(), r.end()));
+
+   auto fl = make_flatten_range(r);
+
+   std::vector<int> expected_flat{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+   EXPECT_EQ(expected_flat.size(), std::distance(fl.begin(), fl.end()));
+   EXPECT_EQ(expected_flat, to_vector(fl));
+}
+
 template <typename InputIterator>
 struct cursor {
    typedef typename InputIterator::value_type value_type;
