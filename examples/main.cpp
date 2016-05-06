@@ -12,14 +12,15 @@
 #include <type_traits>
 #include <vector>
 
-#include "linq.hpp"
-#include "range.hpp"
-#include "stream.hpp"
+#include <mrl/linq.hpp>
+#include <mrl/range.hpp>
+#include <mrl/stream.hpp>
 
 template <typename R>
 void print_all(const R& r) {
    for (auto x : r)
       std::cout << x << ", ";
+
    std::cout << std::endl;
 }
 
