@@ -27,6 +27,8 @@
         'mrl/details/basic_range.hpp',
         'mrl/details/concat_operator.hpp',
         'mrl/details/concat_range.hpp',
+        'mrl/details/chunk_range.hpp',
+        'mrl/details/chunk_operator.hpp',
         'mrl/details/filter_operator.hpp',
         'mrl/details/filter_range.hpp',
         'mrl/details/flatten_operator.hpp',

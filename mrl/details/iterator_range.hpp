@@ -39,7 +39,7 @@ private:
 };
 
 template <typename Iterator>
-auto make_range(Iterator first, Iterator last) {
+auto make_iterator_range(Iterator first, Iterator last) {
    return iterator_range<Iterator>(first, last);
 }
 }

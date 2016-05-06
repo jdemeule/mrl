@@ -701,9 +701,20 @@ TEST(range, on_stream) {
 
    std::istringstream str("0.1 0.2 0.3 0.4");
 
-   auto r        = make_range(std::istream_iterator<double>(str), std::istream_iterator<double>());
+   auto r        = make_iterator_range(std::istream_iterator<double>(str), std::istream_iterator<double>());
    auto filtered = make_filter_range(r, [](auto v) { return v > 0.2; });
    auto vs       = to_vector(filtered);
+
+   EXPECT_EQ(2, vs.size());
+}
+
+TEST(range, on_stream_linq) {
+   using namespace mrl_linq;
+
+   std::istringstream str("0.1 0.2 0.3 0.4");
+
+   auto vs = from(std::istream_iterator<double>(str), std::istream_iterator<double>()) |
+             where([](auto v) { return v > 0.2; }) | to_vector();
 
    EXPECT_EQ(2, vs.size());
 }
@@ -721,6 +732,21 @@ TEST(range, chunk) {
    std::vector<int> expected_flat{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
    EXPECT_EQ(expected_flat.size(), std::distance(fl.begin(), fl.end()));
    EXPECT_EQ(expected_flat, to_vector(fl));
+}
+
+TEST(range, chunk_linq) {
+   using namespace mrl_linq;
+
+   auto r = from(ints(0, 10)) | chunk(2);
+
+   std::vector<std::vector<int> > expected{{0, 1}, {2, 3}, {4, 5}, {6, 7}, {8, 9}};
+   EXPECT_EQ(expected.size(), std::distance(r.begin(), r.end()));
+
+   auto fl = r | flatten();
+
+   std::vector<int> expected_flat{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+   EXPECT_EQ(expected_flat.size(), std::distance(fl.begin(), fl.end()));
+   EXPECT_EQ(expected_flat, fl | to_vector());
 }
 
 template <typename InputIterator>

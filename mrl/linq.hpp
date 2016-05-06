@@ -9,6 +9,7 @@
 #ifndef linq_h
 #define linq_h
 
+#include <mrl/details/chunk_operator.hpp>
 #include <mrl/details/concat_operator.hpp>
 #include <mrl/details/filter_operator.hpp>
 #include <mrl/details/flatten_operator.hpp>

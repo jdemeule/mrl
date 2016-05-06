@@ -31,6 +31,11 @@ template <typename R>
 auto from(const R& r) {
    return make_ref_range(r);
 }
+
+template <typename It>
+auto from(It first, It last) {
+   return make_iterator_range(first, last);
+}
 }
 
 
