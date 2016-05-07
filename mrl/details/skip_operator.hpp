@@ -24,8 +24,10 @@ struct skip_operator : public pipeable_operator {
    std::size_t n;
 };
 
-skip_operator skip(std::size_t n) {
+namespace {
+inline auto skip(std::size_t n) {
    return skip_operator(n);
+}
 }
 }
 

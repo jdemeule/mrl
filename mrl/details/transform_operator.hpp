@@ -29,9 +29,11 @@ struct transform_operator : public pipeable_operator {
    F m_op;
 };
 
+namespace {
 template <typename F>
-transform_operator<F> select(F op) {
+auto select(F op) {
    return transform_operator<F>(op);
+}
 }
 }
 

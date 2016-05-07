@@ -27,9 +27,11 @@ struct filter_predicate : public pipeable_operator {
    Predicate p;
 };
 
+namespace {
 template <typename Predicate>
-filter_predicate<Predicate> where(Predicate p) {
+auto where(Predicate p) {
    return filter_predicate<Predicate>(p);
+}
 }
 }
 

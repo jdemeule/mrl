@@ -27,6 +27,7 @@ auto operator|(const Rg& r, Op op) {
 }
 
 
+namespace {
 template <typename R>
 auto from(const R& r) {
    return make_ref_range(r);
@@ -35,6 +36,12 @@ auto from(const R& r) {
 template <typename It>
 auto from(It first, It last) {
    return make_iterator_range(first, last);
+}
+
+template <typename R>
+auto with(R&& r) {
+   return make_range(std::move(r));
+}
 }
 }
 

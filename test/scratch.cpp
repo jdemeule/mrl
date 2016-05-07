@@ -6,6 +6,7 @@
 //  Copyright © 2016 Jérémy Demeule. All rights reserved.
 //
 
+#include <functional>
 #include <iostream>
 #include <iterator>
 #include <list>
@@ -298,6 +299,73 @@ TEST(range, zip_api) {
    ASSERT_EQ(expected, to_vector(r));
 }
 
+TEST(range, zip_api_2) {
+   // not supported for now.
+   using namespace mrl;
+
+   std::vector<int> v1 = {0, 1, 2};
+   std::vector<int> v2 = {4, 5, 6, 7};
+
+   auto r = make_zip_range(make_ref_range(v1), make_ref_range(v2));
+
+   std::vector<std::tuple<int, int> > expected{{0, 4}, {1, 5}, {2, 6}};
+   ASSERT_EQ(expected.size(), std::distance(r.begin(), r.end()));
+   ASSERT_EQ(expected, to_vector(r));
+}
+
+namespace bar {
+struct as_function_fn {
+private:
+   template <typename R, typename... Args>
+   struct ptr_fn_ {
+   private:
+      R (*pfn_)(Args...);
+
+   public:
+      ptr_fn_() = default;
+      constexpr explicit ptr_fn_(R (*pfn)(Args...))
+         : pfn_(pfn) {}
+      R operator()(Args... args) const {
+         return (*pfn_)(std::forward<Args>(args)...);
+      }
+   };
+
+public:
+   template <typename R, typename... Args>
+   constexpr ptr_fn_<R, Args...> operator()(R (*p)(Args...)) const {
+      return ptr_fn_<R, Args...>(p);
+   }
+   template <typename R, typename T>
+   auto operator()(R T::*p) const -> decltype(std::mem_fn(p)) {
+      return std::mem_fn(p);
+   }
+   //      template<typename T, typename U = detail::decay_t<T>>
+   //      constexpr auto operator()(T && t) const ->
+   //      meta::if_c<!std::is_pointer<U>::value && !std::is_member_pointer<U>::value, T>
+   //      {
+   //         return detail::forward<T>(t);
+   //      }
+};
+}
+
+TEST(range, DISABLED_zip_on_transform_api) {
+   //   using namespace mrl;
+   //
+   //   std::vector<int> v1 = {0, 1, 2, 3};
+   //
+   //   auto fn = [](int x) { return x * x; };
+   //
+   //   auto r = make_zip_range(make_ref_range(v1), make_transform_range(make_ref_range(v1), std::cref(fn)));
+   //
+   //   std::vector<std::tuple<int, int> > expected{{0, 0}, {1, 1}, {2, 4}, {3, 9}};
+   //   ASSERT_EQ(expected.size(), std::distance(r.begin(), r.end()));
+   //   ASSERT_EQ(expected, to_vector(r));
+   //
+   //
+
+   //   auto xxx = std::function(fn);
+}
+
 TEST(range, zip_linq) {
    using namespace mrl_linq;
 
@@ -307,6 +375,19 @@ TEST(range, zip_linq) {
    auto r = from(v1) | zip(from(v2));
 
    std::vector<std::tuple<int, int> > expected{{0, 4}, {1, 5}, {2, 6}, {3, 7}};
+   ASSERT_EQ(expected.size(), std::distance(r.begin(), r.end()));
+   ASSERT_EQ(expected, r | to_vector());
+}
+
+TEST(range, zip_linq_2) {
+   using namespace mrl_linq;
+
+   std::vector<int> v1 = {0, 1, 2};
+   std::vector<int> v2 = {4, 5, 6, 7};
+
+   auto r = from(v1) | zip(from(v2));
+
+   std::vector<std::tuple<int, int> > expected{{0, 4}, {1, 5}, {2, 6}};
    ASSERT_EQ(expected.size(), std::distance(r.begin(), r.end()));
    ASSERT_EQ(expected, r | to_vector());
 }
@@ -749,29 +830,7 @@ TEST(range, chunk_linq) {
    EXPECT_EQ(expected_flat, fl | to_vector());
 }
 
-template <typename InputIterator>
-struct cursor {
-   typedef typename InputIterator::value_type value_type;
 
-   cursor(InputIterator first, InputIterator last)
-      : m_first(first)
-      , m_last(last) {}
-
-   bool done() const {
-      return m_first == m_last;
-   }
-
-   void next() {
-      ++m_first;
-   }
-
-   value_type value() {
-      return *m_first;
-   }
-
-   InputIterator m_first;
-   InputIterator m_last;
-};
 
 template <typename InputIterator>
 struct count_cursor {

@@ -23,8 +23,10 @@ struct take_n_operator : public pipeable_operator {
    std::size_t n;
 };
 
-take_n_operator take(std::size_t n) {
+namespace {
+inline auto take(std::size_t n) {
    return take_n_operator(n);
+}
 }
 }
 

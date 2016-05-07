@@ -19,6 +19,7 @@
       'include_dirs': [
       ],
       'sources': [
+        'build_range_test.cpp',
         'scratch.cpp',
       ],
     },

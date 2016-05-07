@@ -58,7 +58,7 @@ struct transform_iterator : public std::iterator<range_iterator_category_t<Input
 private:
    InputIt m_first;
    InputIt m_last;
-   F       m_apply;
+   F       m_apply;  // optional<F>
 };
 
 template <typename InputIt, typename F>
@@ -68,7 +68,7 @@ struct transform_range : public basic_range {
    typedef transform_iterator<InputIt, F> iterator;
    typedef typename std::result_of<F(typename InputIt::value_type)>::type value_type;
 
-   transform_range(InputIt first, InputIt last, F apply)
+   transform_range(InputIt first, InputIt last, const F& apply)
       : m_first(first)
       , m_last(last)
       , m_apply(apply) {}

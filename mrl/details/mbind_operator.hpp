@@ -28,10 +28,12 @@ struct mbind_operator : public pipeable_operator {
 };
 
 
+namespace {
 // rename to flat_select or select_flat?
 template <typename F>
 auto mbind(F op) {
    return mbind_operator<F>(op);
+}
 }
 }
 

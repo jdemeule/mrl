@@ -27,9 +27,12 @@ struct zip_operator : public pipeable_operator {
    R m_range;
 };
 
+namespace {
+// could take more than 1 range
 template <typename R>
 auto zip(const R& r) {
    return zip_operator<R>(r);
+}
 }
 }
 

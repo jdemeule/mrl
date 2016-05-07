@@ -28,8 +28,10 @@ struct chunk_operator : public pipeable_operator {
 };
 
 
-auto chunk(std::size_t n) {
+namespace {
+inline auto chunk(std::size_t n) {
    return chunk_operator(n);
+}
 }
 }
 

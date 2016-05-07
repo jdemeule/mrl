@@ -101,13 +101,17 @@ private:
    Generator m_generator;
 };
 
+
+namespace {
+
 template <typename T, typename Generator>
 auto make_nums_range(T first, T last, Generator g) {
    return nums_range<T, Generator>(first, last, g);
 }
 
-auto ints(int initial_value = 0, int last_value = std::numeric_limits<int>::max()) {
+inline auto ints(int initial_value = 0, int last_value = std::numeric_limits<int>::max()) {
    return make_nums_range(initial_value, last_value, [](int x) { return ++x; });
+}
 }
 }
 

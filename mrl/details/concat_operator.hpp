@@ -27,9 +27,11 @@ struct concat_operator : public pipeable_operator {
    R m_range;
 };
 
+namespace {
 template <typename R>
 auto concat(const R& r) {
    return concat_operator<R>(r);
+}
 }
 }
 

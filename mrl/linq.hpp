@@ -61,8 +61,10 @@ struct to_vector_operator : public pipeable_operator {
 };
 
 
-to_vector_operator to_vector() {
+namespace {
+inline to_vector_operator to_vector() {
    return to_vector_operator();
+}
 }
 }
 

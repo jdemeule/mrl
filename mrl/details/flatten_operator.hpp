@@ -21,9 +21,11 @@ struct flatten_operator : public pipeable_operator {
    }
 };
 
+namespace {
 // todo: rename it as flatmap
-auto flatten() {
+inline auto flatten() {
    return flatten_operator();
+}
 }
 }
 

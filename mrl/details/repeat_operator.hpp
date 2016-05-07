@@ -14,9 +14,11 @@
 
 namespace mrl_linq {
 
+namespace {
 template <typename Value>
 auto repeat(const Value& value) {
    return make_repeat_range(value);
+}
 }
 }
 

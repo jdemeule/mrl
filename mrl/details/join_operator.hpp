@@ -26,9 +26,11 @@ struct join_operator : public pipeable_operator {
    R m_range;
 };
 
+namespace {
 template <typename R>
 auto join(const R& r) {
    return join_operator<R>(r);
+}
 }
 }
 
