@@ -4,6 +4,8 @@ cc_inc_library(
             "details/basic_range.hpp",
             "details/concat_operator.hpp",
             "details/concat_range.hpp",
+            "details/chunk_operator.hpp",
+            "details/chunk_range.hpp",
             "details/filter_operator.hpp",
             "details/filter_range.hpp",
             "details/flatten_operator.hpp",
