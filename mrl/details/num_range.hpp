@@ -10,6 +10,7 @@
 #define num_range_h
 
 #include <iterator>
+#include <limits>
 
 #include <mrl/details/basic_range.hpp>
 
@@ -105,7 +106,7 @@ auto make_nums_range(T first, T last, Generator g) {
    return nums_range<T, Generator>(first, last, g);
 }
 
-auto ints(int initial_value = 0, int last_value = INT_MAX) {
+auto ints(int initial_value = 0, int last_value = std::numeric_limits<int>::max()) {
    return make_nums_range(initial_value, last_value, [](int x) { return ++x; });
 }
 }
