@@ -18,30 +18,7 @@ namespace mrl {
 
 
 namespace details {
-template <typename InputIterator>
-struct cursor {
-   typedef typename InputIterator::value_type value_type;
 
-   cursor() = default;
-   cursor(InputIterator first, InputIterator last)
-      : m_first(first)
-      , m_last(last) {}
-
-   bool done() const {
-      return m_first == m_last;
-   }
-
-   void next() {
-      ++m_first;
-   }
-
-   value_type value() const {
-      return *m_first;
-   }
-
-   InputIterator m_first;
-   InputIterator m_last;
-};
 
 template <typename InputIt1, typename InputIt2>
 struct zip_iterator : public std::iterator<std::input_iterator_tag,
@@ -85,8 +62,7 @@ public:
          return b.m_c0.done() || b.m_c1.done();
       if (b.m_sentinel)
          return a.m_c0.done() || a.m_c1.done();
-      return false;
-      //      return a.m_first1 == b.m_first1 && a.m_first2 == b.m_first2;
+      return a.m_c0 == b.m_c0 && a.m_c1 == b.m_c1;
    }
 
    friend bool operator!=(const zip_iterator& a, const zip_iterator& b) {
@@ -97,10 +73,6 @@ private:
    cursor<InputIt1> m_c0;
    cursor<InputIt2> m_c1;
    bool             m_sentinel;
-   //   InputIt1         m_first1;
-   //   InputIt1         m_last1;
-   //   InputIt2         m_first2;
-   //   InputIt2         m_last2;
 };
 }
 
@@ -118,7 +90,7 @@ struct zip_range : public basic_range {
       , m_last2(last2) {}
 
    iterator begin() const {
-      return iterator(details::cursor<InputIt1>(m_first1, m_last1), details::cursor<InputIt2>(m_first2, m_last2));
+      return iterator(make_cursor(m_first1, m_last1), make_cursor(m_first2, m_last2));
    }
 
    iterator end() const {

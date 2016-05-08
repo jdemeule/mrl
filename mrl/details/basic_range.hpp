@@ -104,6 +104,52 @@ struct range : public basic_range {
 
 template <typename R>
 struct is_range : public std::is_base_of<basic_range, R> {};
+
+
+template <typename Iterator>
+struct cursor {
+   typedef typename Iterator::value_type value_type;
+
+   cursor()              = default;
+   cursor(const cursor&) = default;
+   cursor(cursor&&)      = default;
+
+   cursor& operator=(const cursor&) = default;
+   cursor& operator=(cursor&&) = default;
+
+   cursor(Iterator first, Iterator last)
+      : m_first(first)
+      , m_last(last) {}
+
+   bool done() const {
+      return m_first == m_last;
+   }
+
+   void next() {
+      ++m_first;
+   }
+
+   value_type value() const {
+      return *m_first;
+   }
+
+   friend bool operator==(const cursor& a, const cursor& b) {
+      return a.m_first == b.m_first;
+   }
+
+   friend bool operator!=(const cursor& a, const cursor& b) {
+      return !(a == b);
+   }
+
+private:
+   Iterator m_first;
+   Iterator m_last;
+};
+
+template <typename Iterator>
+auto make_cursor(Iterator first, Iterator last) {
+   return cursor<Iterator>(first, last);
+}
 }
 
 #endif /* basic_range_h */
