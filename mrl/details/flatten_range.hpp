@@ -18,6 +18,7 @@
 
 namespace mrl {
 
+namespace details {
 
 template <typename InputIt>
 struct flatten_iterator : public std::iterator<std::input_iterator_tag, typename InputIt::value_type::value_type> {
@@ -107,12 +108,13 @@ private:
 
    bool m_sentinel;
 };
+}
 
 template <typename InputIt>
 struct flatten_range : public basic_range {
 
-   typedef flatten_iterator<InputIt>                iterator;
-   typedef flatten_iterator<InputIt>                const_iterator;
+   typedef details::flatten_iterator<InputIt>       iterator;
+   typedef details::flatten_iterator<InputIt>       const_iterator;
    typedef typename InputIt::value_type::value_type value_type;
 
    flatten_range(InputIt first1, InputIt last1)

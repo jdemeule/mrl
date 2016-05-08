@@ -15,6 +15,7 @@
 
 namespace mrl {
 
+namespace details {
 template <typename Value>
 struct repeat_iterator : public std::iterator<std::forward_iterator_tag, Value> {
 
@@ -48,12 +49,13 @@ private:
    value_type m_value;
    bool       m_sentinel;
 };
+}
 
 template <typename Value>
 struct repeat_range : public basic_range {
 
-   typedef repeat_iterator<Value> iterator;
-   typedef Value                  value_type;
+   typedef details::repeat_iterator<Value> iterator;
+   typedef Value                           value_type;
 
    explicit repeat_range(value_type value)
       : m_value(value) {}

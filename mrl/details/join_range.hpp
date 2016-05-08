@@ -16,6 +16,8 @@
 
 namespace mrl {
 
+
+namespace details {
 // rename to cross_join?
 // cartesian_join?
 
@@ -72,13 +74,14 @@ private:
    ForwardIt2 m_last2;
    ForwardIt2 m_current2;
 };
+}
 
 // variadic template on
 // typename...ItRanges
 template <typename InputIt1, typename ForwardIt2>
 struct join_range : public basic_range {
 
-   typedef join_iterator<InputIt1, ForwardIt2>                                        iterator;
+   typedef details::join_iterator<InputIt1, ForwardIt2>                               iterator;
    typedef std::tuple<typename InputIt1::value_type, typename ForwardIt2::value_type> value_type;
 
    join_range(InputIt1 first1, InputIt1 last1, ForwardIt2 first2, ForwardIt2 last2)

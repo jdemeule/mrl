@@ -15,6 +15,7 @@
 
 namespace mrl {
 
+namespace details {
 template <typename InputIt>
 struct skip_iterator : public std::iterator<range_iterator_category_t<InputIt>, typename InputIt::value_type> {
 
@@ -65,13 +66,14 @@ private:
    InputIt     m_last;
    std::size_t m_count;
 };
+}
 
 template <typename InputIt>
 struct skip_range : public basic_range {
 
-   typedef skip_iterator<InputIt>       iterator;
-   typedef skip_iterator<InputIt>       const_iterator;
-   typedef typename InputIt::value_type value_type;
+   typedef details::skip_iterator<InputIt> iterator;
+   typedef details::skip_iterator<InputIt> const_iterator;
+   typedef typename InputIt::value_type    value_type;
 
    skip_range(InputIt first, InputIt last, std::size_t count)
       : m_first(first)

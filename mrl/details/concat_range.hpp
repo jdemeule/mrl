@@ -15,6 +15,7 @@
 
 namespace mrl {
 
+namespace details {
 template <typename InputIt1, typename InputIt2>
 struct concat_iterator : public std::iterator<std::input_iterator_tag, typename InputIt1::value_type> {
 
@@ -65,11 +66,12 @@ private:
    InputIt2 m_first2;
    InputIt2 m_last2;
 };
+}
 
 template <typename InputIt1, typename InputIt2>
 struct concat_range : public basic_range {
 
-   typedef concat_iterator<InputIt1, InputIt2> iterator;
+   typedef details::concat_iterator<InputIt1, InputIt2> iterator;
    typedef typename InputIt1::value_type value_type;
 
    concat_range(InputIt1 first1, InputIt1 last1, InputIt2 first2, InputIt2 last2)

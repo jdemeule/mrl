@@ -16,6 +16,8 @@
 
 namespace mrl {
 
+namespace details {
+
 template <typename InputIt>
 struct chunk_iterator : public std::iterator<range_iterator_category_t<InputIt>, take_n_range<InputIt> > {
 
@@ -61,13 +63,14 @@ private:
    std::size_t m_count;
    bool        m_sentinel;
 };
+}
 
 template <typename InputIt>
 struct chunk_range : public basic_range {
 
-   typedef chunk_iterator<InputIt> iterator;
-   typedef chunk_iterator<InputIt> const_iterator;
-   typedef take_n_range<InputIt>   value_type;
+   typedef details::chunk_iterator<InputIt> iterator;
+   typedef details::chunk_iterator<InputIt> const_iterator;
+   typedef take_n_range<InputIt>            value_type;
 
    chunk_range(InputIt first, InputIt last, std::size_t count)
       : m_first(first)

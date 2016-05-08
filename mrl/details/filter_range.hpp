@@ -17,6 +17,7 @@
 
 namespace mrl {
 
+namespace details {
 // not necessary an input_iterator
 // this will depends on int parameter, a forward is minimal to work
 // an input will limit the postfix increment.
@@ -83,14 +84,14 @@ private:
    InputIt  m_last;
    pred_ref m_pred;
 };
-
-
+}
 
 template <typename InputIt, typename Predicate>
 struct filter_range : public basic_range {
 
-   typedef filter_iterator<InputIt, Predicate> iterator;
-   typedef filter_iterator<InputIt, Predicate> const_iterator;
+   typedef details::filter_iterator<InputIt, Predicate> iterator;
+   typedef details::filter_iterator<InputIt, Predicate> const_iterator;
+
    typedef typename InputIt::value_type value_type;
 
    filter_range(InputIt first, InputIt last, Predicate pred)

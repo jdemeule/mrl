@@ -18,6 +18,7 @@
 
 namespace mrl {
 
+namespace details {
 template <typename InputIt, typename F>
 struct transform_iterator : public std::iterator<range_iterator_category_t<InputIt>,
                                                  typename std::result_of<F(typename InputIt::value_type)>::type> {
@@ -64,12 +65,13 @@ private:
    InputIt m_last;
    fun_ref m_apply;
 };
+}
 
 template <typename InputIt, typename F>
 struct transform_range : public basic_range {
 
-   typedef transform_iterator<InputIt, F> const_iterator;
-   typedef transform_iterator<InputIt, F> iterator;
+   typedef details::transform_iterator<InputIt, F> const_iterator;
+   typedef details::transform_iterator<InputIt, F> iterator;
    typedef typename std::result_of<F(typename InputIt::value_type)>::type value_type;
 
    transform_range(InputIt first, InputIt last, const F& apply)
@@ -91,6 +93,7 @@ private:
    F       m_apply;
 };
 
+namespace {
 template <typename InputIt, typename F>
 auto make_transform_range(InputIt first, InputIt last, F apply) {
    return transform_range<InputIt, F>(first, last, apply);
@@ -100,6 +103,7 @@ template <typename R, typename F, typename std::enable_if_t<is_range<R>::value>*
 auto make_transform_range(const R& r, F apply) {
    return transform_range<typename R::iterator, F>(r.begin(), r.end(), apply);
 };
+}
 }
 
 #endif /* transform_range_h */

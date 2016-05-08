@@ -18,6 +18,7 @@
 
 namespace mrl {
 
+namespace details {
 // Rename it itoa_range?
 
 template <typename T, typename Generator>
@@ -82,13 +83,14 @@ private:
    T       m_first;
    gen_ref m_gen;
 };
+}
 
 
 // could be finite or infinite
 template <typename T, typename Generator>
 struct nums_range : public basic_range {
-   typedef nums_iterator<T, Generator> iterator;
-   typedef nums_iterator<T, Generator> const_iterator;
+   typedef details::nums_iterator<T, Generator> iterator;
+   typedef details::nums_iterator<T, Generator> const_iterator;
    typedef T value_type;
 
    explicit nums_range(T first, T last, Generator gen)

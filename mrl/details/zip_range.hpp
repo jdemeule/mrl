@@ -17,6 +17,7 @@
 namespace mrl {
 
 
+namespace details {
 template <typename InputIterator>
 struct cursor {
    typedef typename InputIterator::value_type value_type;
@@ -101,12 +102,13 @@ private:
    //   InputIt2         m_first2;
    //   InputIt2         m_last2;
 };
+}
 
 // must stop when 1 range is fully consumed
 template <typename InputIt1, typename InputIt2>
 struct zip_range : public basic_range {
 
-   typedef zip_iterator<InputIt1, InputIt2>                                         iterator;
+   typedef details::zip_iterator<InputIt1, InputIt2>                                iterator;
    typedef std::tuple<typename InputIt1::value_type, typename InputIt2::value_type> value_type;
 
    zip_range(InputIt1 first1, InputIt1 last1, InputIt2 first2, InputIt2 last2)
@@ -116,7 +118,7 @@ struct zip_range : public basic_range {
       , m_last2(last2) {}
 
    iterator begin() const {
-      return iterator(cursor<InputIt1>(m_first1, m_last1), cursor<InputIt2>(m_first2, m_last2));
+      return iterator(details::cursor<InputIt1>(m_first1, m_last1), details::cursor<InputIt2>(m_first2, m_last2));
    }
 
    iterator end() const {
