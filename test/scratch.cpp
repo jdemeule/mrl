@@ -403,6 +403,59 @@ TEST(range, zip_linq_2) {
    ASSERT_EQ(expected, r | to_vector());
 }
 
+TEST(range, zip_linq_3) {
+   using namespace mrl_linq;
+
+   std::vector<int> v1 = {0, 1, 2};
+
+   auto r = from(v1) | zip(from(v1), from(v1));
+
+   std::vector<std::tuple<int, int, int> > expected{{0, 0, 0}, {1, 1, 1}, {2, 2, 2}};
+   ASSERT_EQ(expected.size(), std::distance(std::begin(r), std::end(r)));
+   ASSERT_EQ(expected, r | to_vector());
+   ASSERT_EQ(r.begin(), r.begin());
+
+   // this should not compile
+   //   auto r2 = make_zip_range_2(v1, v1, v1);
+}
+
+TEST(range, zip_on_transform_linq) {
+   using namespace mrl_linq;
+
+   std::vector<int> v1 = {0, 1, 2, 3};
+
+   auto r = from(v1) | zip(from(v1) | select([](int x) { return x * x; }));
+
+   std::vector<std::tuple<int, int> > expected{{0, 0}, {1, 1}, {2, 4}, {3, 9}};
+   ASSERT_EQ(expected.size(), std::distance(r.begin(), r.end()));
+   ASSERT_EQ(expected, r | to_vector());
+}
+
+TEST(range, zip_with) {
+   using namespace mrl;
+
+   std::vector<std::string> v0{"a", "b", "c"};
+   std::vector<std::string> v1{"x", "y", "z"};
+
+   auto r = make_transform_range(make_zip_range(make_ref_range(v0), make_ref_range(v1)),
+                                 [](auto p) { return std::get<0>(p) + std::get<1>(p); });
+
+   std::vector<std::string> expected{"ax", "by", "cz"};
+   ASSERT_EQ(expected, to_vector(r));
+}
+
+TEST(range, zip_with_linq) {
+   using namespace mrl_linq;
+
+   std::vector<std::string> v0{"a", "b", "c"};
+   std::vector<std::string> v1{"x", "y", "z"};
+
+   auto r = from(v0) | zip(from(v1)) | select([](auto p) { return std::get<0>(p) + std::get<1>(p); });
+
+   std::vector<std::string> expected{"ax", "by", "cz"};
+   ASSERT_EQ(expected, r | to_vector());
+}
+
 TEST(range, concat_api) {
    using namespace mrl;
 

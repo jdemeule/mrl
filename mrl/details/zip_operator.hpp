@@ -14,24 +14,34 @@
 
 namespace mrl_linq {
 
-template <typename R>
+template <typename... Rs>
 struct zip_operator : public pipeable_operator {
-   explicit zip_operator(const R& r)
-      : m_range(r) {}
+
+   typedef std::tuple<Rs...> ranges;
+
+   explicit zip_operator(const Rs&... rs)
+      : m_ranges(rs...) {}
 
    template <typename Rg>
    auto operator()(const Rg& r) const {
-      return make_zip_range(r, m_range);
+      //      return make_zip_range(r, m_ranges);
+      return impl(r, details::tuple_indices_t<ranges>{});
    }
 
-   R m_range;
+private:
+   template <typename Rg, std::size_t... Is>
+   auto impl(const Rg& r, std::index_sequence<Is...>) const {
+      return make_zip_range(r, std::get<Is>(m_ranges)...);
+   }
+
+   ranges m_ranges;
 };
 
 namespace {
 // could take more than 1 range
-template <typename R>
-auto zip(const R& r) {
-   return zip_operator<R>(r);
+template <typename... Rs>
+auto zip(const Rs&... r) {
+   return zip_operator<Rs...>(r...);
 }
 }
 }
