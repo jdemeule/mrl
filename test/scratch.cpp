@@ -313,6 +313,23 @@ TEST(range, zip_api_2) {
    ASSERT_EQ(expected, to_vector(r));
 }
 
+TEST(range, zip_api_3) {
+   using namespace mrl;
+
+   std::vector<int> v1 = {0, 1, 2};
+
+   auto r = make_zip_range(make_ref_range(v1), make_ref_range(v1), make_ref_range(v1));
+
+   std::vector<std::tuple<int, int, int> > expected{{0, 0, 0}, {1, 1, 1}, {2, 2, 2}};
+   ASSERT_EQ(expected.size(), std::distance(std::begin(r), std::end(r)));
+   ASSERT_EQ(expected, to_vector(r));
+   ASSERT_EQ(r.begin(), r.begin());
+
+   // this should not compile
+   //   auto r2 = make_zip_range_2(v1, v1, v1);
+}
+
+
 namespace bar {
 struct as_function_fn {
 private:

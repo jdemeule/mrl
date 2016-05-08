@@ -20,49 +20,160 @@ namespace mrl {
 namespace details {
 
 
-template <typename InputIt1, typename InputIt2>
-struct zip_iterator : public std::iterator<std::input_iterator_tag,
-                                           std::tuple<typename InputIt1::value_type, typename InputIt2::value_type> > {
 
-   typedef std::tuple<typename InputIt1::value_type, typename InputIt2::value_type> value_type;
+template <typename Tup>
+using tuple_indices_t = std::make_index_sequence<std::tuple_size<typename std::remove_reference<Tup>::type>::value>;
 
-   zip_iterator(cursor<InputIt1> first, cursor<InputIt2> second)
-      : m_c0(first)
-      , m_c1(second)
-      , m_sentinel(false) {}
 
+struct tuple_transform_fn {
 private:
-   explicit zip_iterator(bool sentinel)
-      : m_sentinel(true) {}
+   template <typename Tup, typename Fun, std::size_t... Is>
+   static auto impl1(Tup&& tup, Fun fun, std::index_sequence<Is...>) {
+      return std::tuple<decltype(fun(std::get<Is>(std::forward<Tup>(tup))))...>{
+         fun(std::get<Is>(std::forward<Tup>(tup)))...};
+   }
+
+   template <typename Tup, typename Fun, std::size_t... Is>
+   static auto impl2(Tup&& tup0, Tup&& tup1, Fun fun, std::index_sequence<Is...>) {
+      return std::tuple<decltype(fun(std::get<Is>(std::forward<Tup>(tup0)), std::get<Is>(std::forward<Tup>(tup1))))...>{
+         fun(std::get<Is>(std::forward<Tup>(tup0)), std::get<Is>(std::forward<Tup>(tup1)))...};
+   }
 
 public:
+   template <typename Tup, typename Fun>
+   auto operator()(Tup&& tup, Fun fun) const {
+      return tuple_transform_fn::impl1(std::forward<Tup>(tup), std::move(fun), tuple_indices_t<Tup>{});
+   }
+
+   template <typename Tup, typename Fun>
+   auto operator()(Tup&& tup0, Tup&& tup1, Fun fun) const {
+      return tuple_transform_fn::impl2(
+         std::forward<Tup>(tup0), std::forward<Tup>(tup1), std::move(fun), tuple_indices_t<Tup>{});
+   }
+};
+
+constexpr auto tuple_transform = tuple_transform_fn{};
+
+struct tuple_for_each_fn {
+private:
+   template <typename Tup, typename Fun, std::size_t... Is>
+   static void impl1(Tup&& tup, Fun fun, std::index_sequence<Is...>) {
+      (void)std::initializer_list<int>{((void)fun(std::get<Is>(std::forward<Tup>(tup))), 42)...};
+   }
+
+public:
+   template <typename Tup, typename Fun>
+   auto operator()(Tup&& tup, Fun fun) const {
+      tuple_for_each_fn::impl1(std::forward<Tup>(tup), std::move(fun), tuple_indices_t<Tup>{});
+      return fun;
+   }
+};
+
+constexpr auto tuple_for_each = tuple_for_each_fn{};
+
+struct tuple_any_of_t {
+private:
+   template <typename Tup, typename Fun, std::size_t... Is>
+   static bool impl(Tup&& tup, Fun fun, std::index_sequence<Is...>) {
+      return (... || fun(std::get<Is>(std::forward<Tup>(tup))));
+   }
+
+public:
+   template <typename Tup, typename Fun>
+   bool operator()(Tup&& tup, Fun fun) const {
+      return tuple_any_of_t::impl(tup, fun, tuple_indices_t<Tup>{});
+   }
+};
+constexpr auto tuple_any_of = tuple_any_of_t{};
+
+struct tuple_all_of_t {
+private:
+   template <typename Tup, typename Fun, std::size_t... Is>
+   static bool impl(Tup&& tup, Fun fun, std::index_sequence<Is...>) {
+      return (... && fun(std::get<Is>(std::forward<Tup>(tup))));
+   }
+
+public:
+   template <typename Tup, typename Fun>
+   bool operator()(Tup&& tup, Fun fun) const {
+      return tuple_all_of_t::impl(tup, fun, tuple_indices_t<Tup>{});
+   }
+};
+constexpr auto tuple_all_of = tuple_all_of_t{};
+
+
+struct cursor_advance_t {
+   template <typename Cursor>
+   void operator()(Cursor& c) const {
+      c.next();
+   }
+};
+constexpr auto cursor_advance = cursor_advance_t{};
+
+struct cursor_value_t {
+   template <typename Cursor>
+   auto operator()(Cursor& c) const {
+      return c.value();
+   }
+};
+constexpr auto cursor_value = cursor_value_t{};
+
+struct cursor_done_t {
+   template <typename Cursor>
+   bool operator()(const Cursor& c) const {
+      return c.done();
+   }
+};
+constexpr auto cursor_done = cursor_done_t{};
+
+struct cursor_eq_t {
+   template <typename Cursor>
+   bool operator()(const Cursor& c0, const Cursor& c1) const {
+      return c0 == c1;
+   }
+};
+constexpr auto cursor_eq = cursor_eq_t{};
+
+template <typename R>
+auto make_cursor_2(R&& r) {
+   return make_cursor(std::begin(r), std::end(r));
+}
+
+template <typename... Cursors>
+struct zip_iterator : public std::iterator<std::input_iterator_tag, std::tuple<typename Cursors::value_type...> > {
+
+   typedef std::tuple<typename Cursors::value_type...> value_type;
+
+   zip_iterator(Cursors&&... cursors)
+      : m_cursors(cursors...)
+      , m_sentinel(false) {}
+
    static zip_iterator sentinel() {
       return zip_iterator(true);
    }
 
    zip_iterator& operator++() {
-      m_c0.next();
-      m_c1.next();
+      tuple_for_each(m_cursors, cursor_advance);
       return *this;
    }
 
    zip_iterator operator++(int) {
       auto current(*this);
-      m_c0.next();
-      m_c1.next();
+      tuple_for_each(m_cursors, cursor_advance);
       return current;
    }
 
    value_type operator*() const {
-      return std::make_tuple(m_c0.value(), m_c1.value());
+      return tuple_transform(m_cursors, cursor_value);
    }
 
    friend bool operator==(const zip_iterator& a, const zip_iterator& b) {
       if (a.m_sentinel)
-         return b.m_c0.done() || b.m_c1.done();
+         return tuple_any_of(b.m_cursors, cursor_done);
       if (b.m_sentinel)
-         return a.m_c0.done() || a.m_c1.done();
-      return a.m_c0 == b.m_c0 && a.m_c1 == b.m_c1;
+         return tuple_any_of(a.m_cursors, cursor_done);
+
+      return tuple_all_of(tuple_transform(a.m_cursors, b.m_cursors, cursor_eq), [](bool b) { return b; });
    }
 
    friend bool operator!=(const zip_iterator& a, const zip_iterator& b) {
@@ -70,27 +181,36 @@ public:
    }
 
 private:
-   cursor<InputIt1> m_c0;
-   cursor<InputIt2> m_c1;
-   bool             m_sentinel;
+   explicit zip_iterator(bool sentinel)
+      : m_sentinel(true) {}
+
+
+private:
+   std::tuple<Cursors...> m_cursors;
+   bool                   m_sentinel;
 };
 }
 
-// must stop when 1 range is fully consumed
-template <typename InputIt1, typename InputIt2>
+
+template <typename... Rngs>
 struct zip_range : public basic_range {
 
-   typedef details::zip_iterator<InputIt1, InputIt2>                                iterator;
-   typedef std::tuple<typename InputIt1::value_type, typename InputIt2::value_type> value_type;
+   typedef std::tuple<Rngs...>                                                     ranges;
+   typedef details::zip_iterator<cursor<typename std::decay_t<Rngs>::iterator>...> const_iterator;
+   typedef const_iterator                                                          iterator;
+   typedef std::tuple<typename std::decay_t<Rngs>::value_type...>                  value_type;
 
-   zip_range(InputIt1 first1, InputIt1 last1, InputIt2 first2, InputIt2 last2)
-      : m_first1(first1)
-      , m_last1(last1)
-      , m_first2(first2)
-      , m_last2(last2) {}
+   zip_range(const Rngs&... rngs)
+      : m_ranges(rngs...) {}
 
    iterator begin() const {
-      return iterator(make_cursor(m_first1, m_last1), make_cursor(m_first2, m_last2));
+      constexpr auto Size = std::tuple_size<std::decay_t<ranges> >::value;
+      return make_zip_iterator(m_ranges, std::make_index_sequence<Size>{});
+   }
+
+   template <typename Tup, std::size_t... Is>
+   iterator make_zip_iterator(const Tup& tup, std::index_sequence<Is...>) const {
+      return iterator(details::make_cursor_2(std::get<Is>(tup))...);
    }
 
    iterator end() const {
@@ -98,26 +218,14 @@ struct zip_range : public basic_range {
    }
 
 private:
-   InputIt1 m_first1;
-   InputIt1 m_last1;
-   InputIt2 m_first2;
-   InputIt2 m_last2;
+   ranges m_ranges;
 };
 
-
-template <typename InputIt1, typename InputIt2>
-auto make_zip_range(InputIt1 first1, InputIt2 last1, InputIt2 first2, InputIt2 last2) {
-   return zip_range<InputIt1, InputIt2>(first1, last1, first2, last2);
-}
-
-
-template <typename R1,
-          typename R2,
-          typename std::enable_if_t<is_range<R1>::value>* = nullptr,
-          typename std::enable_if_t<is_range<R2>::value>* = nullptr>
-auto make_zip_range(const R1& r1, const R2& r2) {
-   // return a stream of tuple<R1::value, R2::value>
-   return zip_range<typename R1::iterator, typename R2::iterator>(r1.begin(), r1.end(), r2.begin(), r2.end());
+// Rngs must respect is_range concept
+// (inherits from base_range)
+template <typename... Rngs>
+auto make_zip_range(const Rngs&... rngs) {
+   return zip_range<Rngs...>(rngs...);
 }
 }
 
