@@ -12,6 +12,8 @@
 #include <iterator>
 #include <type_traits>
 
+#include <experimental/optional>
+
 #include <mrl/details/basic_range.hpp>
 
 namespace mrl {
@@ -21,6 +23,8 @@ struct transform_iterator : public std::iterator<range_iterator_category_t<Input
                                                  typename std::result_of<F(typename InputIt::value_type)>::type> {
 
    typedef typename std::result_of<F(typename InputIt::value_type)>::type value_type;
+
+   typedef std::experimental::optional<F> fun_ref;
 
    transform_iterator()
       : m_first()
@@ -44,7 +48,7 @@ struct transform_iterator : public std::iterator<range_iterator_category_t<Input
    }
 
    value_type operator*() const {
-      return m_apply(*m_first);
+      return (*m_apply)(*m_first);
    }
 
    friend bool operator==(const transform_iterator& a, const transform_iterator& b) {
@@ -58,7 +62,7 @@ struct transform_iterator : public std::iterator<range_iterator_category_t<Input
 private:
    InputIt m_first;
    InputIt m_last;
-   F       m_apply;  // optional<F>
+   fun_ref m_apply;
 };
 
 template <typename InputIt, typename F>

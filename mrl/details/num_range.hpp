@@ -12,6 +12,8 @@
 #include <iterator>
 #include <limits>
 
+#include <experimental/optional>
+
 #include <mrl/details/basic_range.hpp>
 
 namespace mrl {
@@ -22,6 +24,8 @@ template <typename T, typename Generator>
 struct nums_iterator : public std::iterator<std::input_iterator_tag, T> {
 
    typedef T value_type;
+
+   typedef std::experimental::optional<Generator> gen_ref;
 
    nums_iterator()
       : m_first()
@@ -41,6 +45,11 @@ struct nums_iterator : public std::iterator<std::input_iterator_tag, T> {
       : m_first(first)
       , m_gen(gen) {}
 
+   nums_iterator(T first, gen_ref gen)
+      : m_first(first)
+      , m_gen(gen) {}
+
+
    void swap(nums_iterator& that) {
       using std::swap;
       swap(m_first, that.m_first);
@@ -48,12 +57,12 @@ struct nums_iterator : public std::iterator<std::input_iterator_tag, T> {
    }
 
    nums_iterator& operator++() {
-      m_first = m_gen(m_first);
+      m_first = (*m_gen)(m_first);
       return *this;
    }
 
    nums_iterator operator++(int) {
-      m_first = m_gen(m_first);
+      m_first = (*m_gen)(m_first);
       return nums_iterator(m_first, m_gen);
    }
 
@@ -70,8 +79,8 @@ struct nums_iterator : public std::iterator<std::input_iterator_tag, T> {
    }
 
 private:
-   T         m_first;
-   Generator m_gen;
+   T       m_first;
+   gen_ref m_gen;
 };
 
 

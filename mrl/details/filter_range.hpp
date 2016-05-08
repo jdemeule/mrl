@@ -10,6 +10,9 @@
 #define filter_range_h
 
 #include <iterator>
+
+#include <experimental/optional>
+
 #include <mrl/details/basic_range.hpp>
 
 namespace mrl {
@@ -24,7 +27,16 @@ struct filter_iterator : public std::iterator<range_iterator_category_t<InputIt>
 
    typedef typename InputIt::value_type value_type;
 
+   typedef std::experimental::optional<Predicate> pred_ref;
+
    filter_iterator(InputIt first, InputIt last, Predicate pred)
+      : m_first(first)
+      , m_last(last)
+      , m_pred(pred) {
+      next();
+   }
+
+   filter_iterator(InputIt first, InputIt last, pred_ref pred)
       : m_first(first)
       , m_last(last)
       , m_pred(pred) {
@@ -63,13 +75,13 @@ private:
       if (m_first == m_last)
          return;
 
-      while (m_first != m_last && !m_pred(*m_first))
+      while (m_first != m_last && !(*m_pred)(*m_first))
          ++m_first;
    }
 
-   InputIt   m_first;
-   InputIt   m_last;
-   Predicate m_pred;
+   InputIt  m_first;
+   InputIt  m_last;
+   pred_ref m_pred;
 };
 
 

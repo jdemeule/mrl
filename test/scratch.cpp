@@ -348,22 +348,16 @@ public:
 };
 }
 
-TEST(range, DISABLED_zip_on_transform_api) {
-   //   using namespace mrl;
-   //
-   //   std::vector<int> v1 = {0, 1, 2, 3};
-   //
-   //   auto fn = [](int x) { return x * x; };
-   //
-   //   auto r = make_zip_range(make_ref_range(v1), make_transform_range(make_ref_range(v1), std::cref(fn)));
-   //
-   //   std::vector<std::tuple<int, int> > expected{{0, 0}, {1, 1}, {2, 4}, {3, 9}};
-   //   ASSERT_EQ(expected.size(), std::distance(r.begin(), r.end()));
-   //   ASSERT_EQ(expected, to_vector(r));
-   //
-   //
+TEST(range, zip_on_transform_api) {
+   using namespace mrl;
 
-   //   auto xxx = std::function(fn);
+   std::vector<int> v1 = {0, 1, 2, 3};
+
+   auto r = make_zip_range(make_ref_range(v1), make_transform_range(make_ref_range(v1), [](int x) { return x * x; }));
+
+   std::vector<std::tuple<int, int> > expected{{0, 0}, {1, 1}, {2, 4}, {3, 9}};
+   ASSERT_EQ(expected.size(), std::distance(r.begin(), r.end()));
+   ASSERT_EQ(expected, to_vector(r));
 }
 
 TEST(range, zip_linq) {
